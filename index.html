@@ -12,31 +12,45 @@
   --p900:#2e1065;--p700:#6d28d9;--p600:#7c3aed;--p500:#8b5cf6;--p200:#ddd6fe;--p100:#ede9fe;--p50:#f5f3ff;
   --ink:#1e1b2e;--mute:#6b6880;--line:#e7e3f5;--white:#fff;--good:#16a34a;
   --r:18px;
+  --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--white);line-height:1.55;-webkit-text-size-adjust:100%}
+html{scroll-behavior:smooth;scroll-padding-top:74px}
+body{margin:0;font-family:var(--fb,var(--sans));color:var(--ink);background:var(--white);line-height:1.55;-webkit-text-size-adjust:100%}
 img{max-width:100%;display:block}
 a{color:inherit}
 button,input,textarea,select{font:inherit}
-.wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px;position:relative;z-index:1}
+section.s,header.hero,footer{font-family:var(--fb,var(--sans))}
+h1,h2,h3{font-family:var(--fh,var(--fb,var(--sans)))}
 
-/* nav */
-nav.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-nav.top .wrap{display:flex;align-items:center;gap:14px;height:56px}
-.brand{font-weight:800;letter-spacing:-.02em;color:var(--p700);white-space:nowrap}
-.links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
-.links::-webkit-scrollbar{display:none}
-.links a{text-decoration:none;font-size:14px;font-weight:600;color:var(--mute);padding:7px 12px;border-radius:99px;white-space:nowrap}
-.links a:hover{background:var(--p50);color:var(--p700)}
+/* ---------- top bar: flowing ribbons ---------- */
+nav.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);overflow:hidden;font-family:var(--fb,var(--sans))}
+.ticker{overflow:hidden;padding:9px 0}
+.tk{display:flex;width:max-content;animation:flow 20s linear infinite}
+.tk:hover,.tk.hold{animation-play-state:paused}
+.tkset{display:flex;gap:10px;padding-right:10px}
+.rib{display:inline-block;text-decoration:none;white-space:nowrap;font-weight:700;font-size:14px;color:var(--p700);background:#fff;border:2px solid var(--p600);border-radius:99px;padding:6px 16px;box-shadow:0 0 0 3px var(--p100)}
+.rib:hover{background:var(--p600);color:#fff}
+@keyframes flow{from{transform:translateX(-16.6667%)}to{transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){.tk{animation:none}.ticker{overflow-x:auto}}
 
-/* hero */
-.hero{background:linear-gradient(160deg,var(--p700),var(--p900));color:#fff;padding:54px 0 64px;position:relative;overflow:hidden}
-.hero:after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.08)}
-.hero .wrap{position:relative;z-index:1}
+/* ---------- background layers ---------- */
+section.s,header.hero{position:relative;overflow:hidden}
+.bgl{position:absolute;inset:0;z-index:0;overflow:hidden}
+.bgl>*{position:absolute;inset:0;width:100%;height:100%}
+.bgl .bgi{background-size:cover;background-position:center}
+.bgl video{object-fit:cover}
+
+/* ---------- hero ---------- */
+.hero{background:linear-gradient(160deg,var(--p700),var(--p900));color:#fff;padding:54px 0 64px}
+.hero:after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.08);z-index:0}
 .eyebrow{display:inline-block;background:rgba(255,255,255,.16);padding:5px 12px;border-radius:99px;font-size:13px;font-weight:600;margin-bottom:16px}
 .hero h1{font-size:clamp(32px,7vw,54px);line-height:1.08;margin:0 0 12px;letter-spacing:-.03em}
 .hero p{font-size:clamp(16px,2.4vw,19px);max-width:620px;margin:0 0 22px;opacity:.92}
+.hero.txd{color:var(--ink)}
+.hero.txd .eyebrow{background:rgba(30,27,46,.1)}
+.hero.txd .stat{background:rgba(30,27,46,.08)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}
 .chip{background:#fff;color:var(--p700);font-weight:700;font-size:13px;padding:6px 12px;border-radius:99px}
 .btn{display:inline-block;background:#fff;color:var(--p700);font-weight:700;border:0;padding:12px 20px;border-radius:12px;text-decoration:none;cursor:pointer}
@@ -50,18 +64,20 @@ nav.top .wrap{display:flex;align-items:center;gap:14px;height:56px}
 .stat b{display:block;font-size:24px;letter-spacing:-.02em}
 .stat span{font-size:12px;opacity:.85}
 
-/* sections */
-section.s{padding:56px 0;border-bottom:1px solid var(--line)}
+/* ---------- sections ---------- */
+section.s{padding:56px 0;border-bottom:1px solid var(--line);background:#fff}
 section.s.alt{background:var(--p50)}
 .sh{margin-bottom:26px}
 .sh h2{margin:0 0 4px;font-size:clamp(24px,4.5vw,32px);letter-spacing:-.02em}
 .sh h2:before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--p600);margin-right:10px;transform:translateY(-3px)}
 .sh p{margin:0;color:var(--mute)}
+.txl .sh h2,.txl .sh p{color:#fff}
+.txd .sh h2{color:var(--ink)}.txd .sh p{color:#3b3750}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
 .card{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:0 1px 0 rgba(109,40,217,.04)}
 .empty{color:var(--mute);padding:22px;border:1px dashed var(--p200);border-radius:var(--r);text-align:center;background:#fff}
 
-/* project cards */
+/* ---------- project cards ---------- */
 .ph{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .logo{width:46px;height:46px;border-radius:12px;background:var(--p100);border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--p700);overflow:hidden;flex:none}
 .logo img{width:100%;height:100%;object-fit:contain}
@@ -82,18 +98,26 @@ section.s.alt{background:var(--p50)}
 .fill.b{background:linear-gradient(90deg,var(--p500),var(--p700))}
 .brow b{color:var(--ink);font-size:13px}
 
-/* content */
-.ccard a{text-decoration:none;display:block}
+/* ---------- content carousel ---------- */
+.cwrap{position:relative}
+.ctrack{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 10px;-webkit-overflow-scrolling:touch}
+.ctrack::-webkit-scrollbar{display:none}
+.cc{flex:0 0 min(84vw,330px);scroll-snap-align:start;background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.cc a{display:block;text-decoration:none;height:100%}
+.cthumb{aspect-ratio:16/9;background:linear-gradient(135deg,var(--p500),var(--p700));background-size:cover;background-position:center}
+.cbody{padding:16px}
 .ctag{font-size:12px;font-weight:700;color:var(--p600);text-transform:uppercase;letter-spacing:.04em}
-.ccard h3{margin:6px 0;font-size:17px;line-height:1.3}
-.ccard p{margin:0 0 12px;color:var(--mute);font-size:14px}
+.cc h3{margin:6px 0;font-size:17px;line-height:1.3}
+.cc p{margin:0 0 12px;color:var(--mute);font-size:14px}
 .go{font-size:13px;font-weight:700;color:var(--p700)}
+.cnav{position:absolute;top:38%;z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.95);color:var(--p700);font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.cnav.l{left:-6px}.cnav.r{right:-6px}
 
-/* carousel */
+/* ---------- animations carousel ---------- */
 .car{position:relative;border-radius:22px;overflow:hidden;background:var(--p900);box-shadow:0 20px 50px -20px rgba(46,16,101,.5)}
 .trackc{display:flex;transition:transform .6s cubic-bezier(.3,.7,.2,1)}
 .slide{min-width:100%;aspect-ratio:16/9;position:relative;background:linear-gradient(135deg,var(--p700),var(--p900));display:grid;place-items:center;color:#fff}
-.slide .bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.9}
+.slide .bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .slide .shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(30,10,70,.75),transparent 55%)}
 .slide iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .play{position:relative;z-index:2;width:68px;height:68px;border-radius:50%;background:#fff;color:var(--p700);border:0;font-size:26px;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 24px rgba(0,0,0,.3)}
@@ -104,14 +128,17 @@ section.s.alt{background:var(--p50)}
 .dots i{width:8px;height:8px;border-radius:99px;background:var(--p200);cursor:pointer;transition:all .3s}
 .dots i.on{width:24px;background:var(--p600)}
 
-/* contact */
+/* ---------- contact ---------- */
 .contacts{display:flex;flex-wrap:wrap;gap:12px}
-.contacts a{display:flex;flex-direction:column;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 18px;min-width:170px}
+.contacts a{display:flex;align-items:center;gap:12px;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 18px;min-width:190px}
 .contacts a:hover{border-color:var(--p500)}
+.contacts .clg{width:40px;height:40px;border-radius:10px;background:var(--p100);display:grid;place-items:center;overflow:hidden;flex:none;font-weight:800;color:var(--p700)}
+.contacts .clg img{width:100%;height:100%;object-fit:contain}
+.contacts .ct{display:flex;flex-direction:column;min-width:0}
 .contacts small{color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.05em;font-size:11px}
 .contacts b{color:var(--p700);word-break:break-all}
 
-/* tools */
+/* ---------- tools ---------- */
 .lock{max-width:420px;margin:0 auto;text-align:center}
 .lock .ic{font-size:34px}
 .lock input{width:100%;padding:12px 14px;border:1px solid var(--p200);border-radius:12px;margin:12px 0;font-size:16px}
@@ -120,11 +147,11 @@ section.s.alt{background:var(--p50)}
 footer{padding:28px 0;color:var(--mute);font-size:14px;text-align:center}
 footer a{color:var(--p600);font-weight:600}
 
-/* admin */
-#admin{display:none;background:var(--p50);min-height:100vh;padding-bottom:80px}
+/* ---------- admin ---------- */
+#admin{display:none;background:var(--p50);min-height:100vh;padding-bottom:96px;font-family:var(--sans)}
 .abar{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line)}
 .abar .wrap{display:flex;gap:10px;align-items:center;height:58px}
-.abar h1{font-size:17px;margin:0;color:var(--p700);flex:1}
+.abar h1{font-size:17px;margin:0;color:var(--p700);flex:1;font-family:var(--sans)}
 .tabs{display:flex;gap:6px;overflow-x:auto;padding:14px 0 6px;scrollbar-width:none}
 .tabs button{border:0;background:#fff;border:1px solid var(--line);color:var(--mute);font-weight:700;padding:8px 14px;border-radius:99px;cursor:pointer;white-space:nowrap}
 .tabs button.on{background:var(--p600);color:#fff;border-color:var(--p600)}
@@ -138,56 +165,62 @@ textarea.in{min-height:70px;resize:vertical}
 .mrow{display:grid;grid-template-columns:1.4fr 1fr 1fr auto;gap:6px;margin-bottom:6px;align-items:center}
 .mrow .in{padding:8px 9px;font-size:14px}
 .lg{display:flex;align-items:center;gap:12px}
+.lp{width:56px;height:56px;border-radius:12px;background:var(--p100);border:1px solid var(--line);object-fit:contain;flex:none}
+.tp{width:112px;height:63px;border-radius:10px;background:var(--p100);border:1px solid var(--line);object-fit:cover;flex:none}
+.ph0{display:grid;place-items:center;font-size:11px;color:var(--mute);text-align:center}
 .hint{font-size:12px;color:var(--mute);margin:6px 0 0}
-.savebar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#fff;border-top:1px solid var(--line);padding:12px 0}
+.fprev{font-size:18px;margin-top:6px;color:var(--p700)}
+.sizebox{background:var(--p50);border:1px dashed var(--p200);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--ink);margin-bottom:6px}
+.sizebox b{color:var(--p700)}
+.rg{display:flex;align-items:center;gap:10px}
+.rg input{flex:1}
+.savebar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:#fff;border-top:1px solid var(--line);padding:10px 0}
 .savebar .wrap{display:flex;gap:10px;align-items:center}
-.savebar span{flex:1;font-size:13px;color:var(--mute)}
+.savebar .msgs{flex:1;font-size:13px;color:var(--mute);min-width:0}
+.meter{font-size:12px;margin-top:2px}
+.meter.warn{color:#b45309}.meter.bad{color:#b91c1c;font-weight:700}
 .login{max-width:380px;margin:12vh auto;padding:26px}
 .banner{background:#fef3c7;color:#92400e;font-size:13px;padding:10px 14px;border-radius:12px;margin-bottom:14px}
-@media(max-width:560px){.stats{grid-template-columns:repeat(3,1fr)}.mrow{grid-template-columns:1fr 1fr;}.mrow .in:first-child{grid-column:1/-1}}
+@media(max-width:560px){.stats{grid-template-columns:repeat(3,1fr)}.mrow{grid-template-columns:1fr 1fr;}.mrow .in:first-child{grid-column:1/-1}.cnav{display:none}}
 </style>
 </head>
 <body>
 
 <!-- ======================= PUBLIC SITE ======================= -->
 <div id="site">
-  <nav class="top"><div class="wrap">
-    <div class="brand" id="navBrand">Proof of Work</div>
-    <div class="links">
-      <a href="#analytics">Analytics</a><a href="#content">Content</a><a href="#animations">Animations</a><a href="#contact">Contact</a><a href="#tools">🔒 Tools</a>
-    </div>
-  </div></nav>
+  <div id="top"></div>
+  <nav class="top"><div class="ticker"><div class="tk" id="tk"></div></div></nav>
 
-  <header class="hero"><div class="wrap">
+  <header class="hero" id="home"><div class="bgl"></div><div class="wrap">
     <span class="eyebrow" id="hEyebrow"></span>
     <h1 id="hName"></h1>
     <p id="hTag"></p>
     <div class="chips" id="hRoles"></div>
-    <a class="btn" href="#contact">Work with me</a>
+    <a class="btn" id="hCta" href="#contact">Work with me</a>
     <div class="stats" id="hStats"></div>
   </div></header>
 
-  <section class="s" id="analytics"><div class="wrap">
+  <section class="s" id="analytics"><div class="bgl"></div><div class="wrap">
     <div class="sh"><h2>Analytics</h2><p>Real numbers I drove, from where we started to where we got.</p></div>
     <div class="grid" id="projects"></div>
   </div></section>
 
-  <section class="s alt" id="content"><div class="wrap">
+  <section class="s alt" id="content"><div class="bgl"></div><div class="wrap">
     <div class="sh"><h2>Content</h2><p>My best pieces.</p></div>
-    <div class="grid" id="contentList"></div>
+    <div id="contentBox"></div>
   </div></section>
 
-  <section class="s" id="animations"><div class="wrap">
+  <section class="s" id="animations"><div class="bgl"></div><div class="wrap">
     <div class="sh"><h2>Animations</h2><p>A look at my animated work.</p></div>
     <div id="animBox"></div>
   </div></section>
 
-  <section class="s alt" id="contact"><div class="wrap">
+  <section class="s alt" id="contact"><div class="bgl"></div><div class="wrap">
     <div class="sh"><h2>Contact</h2><p>Let's build something.</p></div>
     <div class="contacts" id="contactList"></div>
   </div></section>
 
-  <section class="s" id="tools"><div class="wrap">
+  <section class="s" id="tools"><div class="bgl"></div><div class="wrap">
     <div class="sh"><h2>Tools</h2><p>The stack I work with.</p></div>
     <div id="toolsBox"></div>
   </div></section>
@@ -218,14 +251,13 @@ textarea.in{min-height:70px;resize:vertical}
       <div class="tabs" id="tabs"></div>
       <div id="panels"></div>
     </div>
-    <div class="savebar"><div class="wrap"><span id="saveMsg">Changes are not live until you press Save.</span><button class="btn pri" id="saveBtn">Save &amp; publish</button></div></div>
+    <div class="savebar"><div class="wrap"><div class="msgs"><div id="saveMsg">Changes are not live until you press Save.</div><div class="meter" id="meter"></div></div><button class="btn pri" id="saveBtn">Save &amp; publish</button></div></div>
   </div>
 </div>
 
 <script type="module">
 /* =========================================================
-   1) SETTINGS  — paste your free Firebase config here.
-   Leave as null to run in DEMO MODE (edits aren't saved).
+   1) SETTINGS: your free Firebase config
    ========================================================= */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyCqB3PGo6LFngNV8UD-9VoAu34A_4pP_nI",
@@ -234,12 +266,16 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "11841833291",
   appId: "1:11841833291:web:f4ee95d13b329f778440ce"
 };
-/* Example:
-const FIREBASE_CONFIG = {
-  apiKey: "...", authDomain: "...firebaseapp.com", projectId: "...",
-  appId: "..."
+
+/* ---------- fonts (all free Google Fonts) ---------- */
+const FONTS = {
+  "Inter":"400;600;700;800","Poppins":"400;600;700;800","Montserrat":"400;600;700;800","Playfair Display":"400;600;700;800",
+  "Space Grotesk":"400;500;600;700","DM Sans":"400;600;700","Lora":"400;600;700","Oswald":"400;600;700","Raleway":"400;600;700;800",
+  "Nunito":"400;600;700;800","Roboto Slab":"400;600;700;800","Merriweather":"400;700","Orbitron":"400;600;700;800","Syne":"400;600;700;800",
+  "Outfit":"400;600;700;800","Sora":"400;600;700;800","Manrope":"400;600;700;800","Caveat":"400;600;700",
+  "Bebas Neue":"","Pacifico":"","Archivo Black":""
 };
-*/
+const SECTIONS = [["home","Home (top banner)"],["analytics","Analytics"],["content","Content"],["animations","Animations"],["contact","Contact"],["tools","Tools"]];
 
 /* ---------- default / demo data ---------- */
 const DEMO = {
@@ -247,35 +283,46 @@ const DEMO = {
   roles:["Content Strategy","Social Media Management","AI Animations","Creative Researcher","Content Ambassador"],
   projects:[
     {name:"Sample Protocol",logo:"",roles:"Content Ambassador, AI Animations",note:"Animated explainer series and daily engagement push.",link:"https://x.com",
-     metrics:[{label:"Followers",from:4200,to:11800},{label:"Monthly impressions",from:90000,to:640000}]},
-    {name:"Another Brand",logo:"",roles:"Social Media Management, Content Strategy",note:"Rebuilt the content calendar and community loops.",link:"",
-     metrics:[{label:"Engagement rate (%)",from:1.2,to:4.8}]}
+     metrics:[{label:"Followers",from:4200,to:11800},{label:"Monthly impressions",from:90000,to:640000}]}
   ],
   content:[
-    {title:"Sample thread that went viral",url:"https://x.com",platform:"X",note:"Reached 200K+ views in 48 hours."},
-    {title:"Animated explainer",url:"https://youtube.com",platform:"YouTube",note:"Breaks down a complex idea in 60 seconds."}
+    {title:"Sample thread that went viral",url:"https://x.com",platform:"X",note:"Reached 200K+ views in 48 hours.",thumb:""},
+    {title:"Animated explainer",url:"https://youtube.com",platform:"YouTube",note:"Breaks down a complex idea in 60 seconds.",thumb:""}
   ],
   animations:[
-    {title:"Sample animation (paste a YouTube, Drive or X link in admin)",url:"https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+    {title:"Sample animation (paste a YouTube, Drive or X link in admin)",url:"https://www.youtube.com/watch?v=dQw4w9WgXcQ",thumb:""}
   ],
   contacts:[
-    {label:"Email",url:"mailto:you@example.com",text:"you@example.com"},
-    {label:"Telegram",url:"https://t.me/yourhandle",text:"@yourhandle"},
-    {label:"X",url:"https://x.com/yourhandle",text:"@yourhandle"}
+    {label:"Email",url:"mailto:you@example.com",text:"you@example.com",logo:""},
+    {label:"Telegram",url:"https://t.me/yourhandle",text:"@yourhandle",logo:""}
   ],
-  toolsEnc:null
+  bg:{}, fonts:{}, toolsEnc:null
 };
 
 /* ---------- helpers ---------- */
 const $ = (s,r=document)=>r.querySelector(s);
 const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl = u => { u=String(u||"").trim(); return /^(https?:\/\/|mailto:|tel:)/i.test(u)?u:(u&&/^[\w.-]+\.[a-z]{2,}/i.test(u)?"https://"+u:""); };
+const safeImg = u => /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(String(u||""))?u:"";
+const videoSrc = u => { u=String(u||"").trim(); if(/^https?:\/\//i.test(u)) return u; return /^[\w\-./]+\.(mp4|webm|mov)$/i.test(u)?u:""; };
 const compact = n => { n=Number(n); if(!isFinite(n))return "0"; const a=Math.abs(n); if(a>=1e9)return +(n/1e9).toFixed(1)+"B"; if(a>=1e6)return +(n/1e6).toFixed(1)+"M"; if(a>=1e3)return +(n/1e3).toFixed(1)+"K"; return String(+n.toFixed(2)); };
 const growth = (f,t)=>{ f=Number(f); t=Number(t); if(!f) return null; return Math.round(((t-f)/f)*100); };
 const clone = o => JSON.parse(JSON.stringify(o));
 
 let data = clone(DEMO);
-let db=null, auth=null, fb=null, authed=false;
+let db=null, auth=null, fb=null, authed=false, siteRendered=false, view=null;
+
+/* ---------- fonts loader ---------- */
+const fontsLoaded=new Set();
+function loadFonts(names){
+  names.forEach(n=>{
+    if(!n||!(n in FONTS)||fontsLoaded.has(n)) return; fontsLoaded.add(n);
+    const w=FONTS[n], l=document.createElement("link"); l.rel="stylesheet";
+    l.href="https://fonts.googleapis.com/css2?family="+n.replace(/ /g,"+")+(w?":wght@"+w:"")+"&display=swap";
+    document.head.appendChild(l);
+  });
+}
+const fam = n => `'${n}',system-ui,sans-serif`;
 
 /* ---------- crypto for the password-gated Tools section ---------- */
 const enc = new TextEncoder(), dec = new TextDecoder();
@@ -297,7 +344,8 @@ async function decryptJSON(blob,pw){
   return JSON.parse(dec.decode(pt));
 }
 
-/* ---------- firebase (loaded only if configured) ---------- */
+/* ---------- firebase ---------- */
+function normalize(){ data.bg=data.bg||{}; data.fonts=data.fonts||{}; data.profile=data.profile||{}; ["roles","projects","content","animations","contacts"].forEach(k=>{ if(!Array.isArray(data[k])) data[k]=[]; }); }
 async function initFirebase(){
   if(!FIREBASE_CONFIG) return;
   const v="10.12.2", base=`https://www.gstatic.com/firebasejs/${v}/`;
@@ -309,24 +357,47 @@ async function initFirebase(){
   au.onAuthStateChanged(auth,u=>{ authed=!!u; if(location.hash==="#admin") route(); });
   try{
     const snap=await fs.getDoc(fs.doc(db,"site","main"));
-    if(snap.exists()) data=Object.assign(clone(DEMO),snap.data()); else data=emptyData();
+    data = snap.exists()? Object.assign(clone(DEMO),snap.data()) : emptyData();
   }catch(e){ console.warn("Could not load data",e); data=emptyData(); }
+  normalize();
 }
-function emptyData(){ return {profile:{name:"Your Name",eyebrow:"Proof of Work",tagline:"Add your tagline in the admin panel."},roles:[],projects:[],content:[],animations:[],contacts:[],toolsEnc:null}; }
+function emptyData(){ return {profile:{name:"Your Name",eyebrow:"Proof of Work",tagline:"Add your tagline in the admin panel."},roles:[],projects:[],content:[],animations:[],contacts:[],bg:{},fonts:{},toolsEnc:null}; }
 
 /* =========================================================
    PUBLIC RENDER
    ========================================================= */
+function renderTicker(){
+  const p=data.profile||{};
+  const items=[[p.navLabel||"Homepage","#top"],["Analytics","#analytics"],["Content","#content"],["Animations","#animations"],["Contact","#contact"],["🔒 Tools","#tools"]];
+  const set=(hidden)=>`<div class="tkset"${hidden?' aria-hidden="true"':""}>${items.map(([l,h])=>`<a class="rib" href="${h}"${hidden?' tabindex="-1"':""}>${esc(l)}</a>`).join("")}</div>`;
+  const tk=$("#tk"); tk.innerHTML=set(false)+set(true)+set(true)+set(true)+set(true)+set(true);
+  if(!tk._bound){
+    tk._bound=true; let t=null;
+    tk.addEventListener("touchstart",()=>{ clearTimeout(t); tk.classList.add("hold"); },{passive:true});
+    const rel=()=>{ clearTimeout(t); t=setTimeout(()=>tk.classList.remove("hold"),1500); };
+    tk.addEventListener("touchend",rel,{passive:true}); tk.addEventListener("touchcancel",rel,{passive:true});
+  }
+}
+
 function renderSite(){
+  siteRendered=true; normalize();
   const p=data.profile||{};
   document.title=(p.name?p.name+" · ":"")+"Proof of Work";
-  $("#navBrand").textContent=p.name||"Proof of Work";
   $("#hEyebrow").textContent=p.eyebrow||"Proof of Work";
   $("#hName").textContent=p.name||"";
   $("#hTag").textContent=p.tagline||"";
   $("#fName").textContent=p.name||"";
   $("#yr").textContent=new Date().getFullYear();
   $("#hRoles").innerHTML=(data.roles||[]).map(r=>`<span class="chip">${esc(r)}</span>`).join("");
+  renderTicker();
+
+  // CTA button
+  const cta=$("#hCta"), ctaText=p.ctaText===undefined?"Work with me":p.ctaText, ctaUrl=String(p.ctaUrl===undefined?"#contact":p.ctaUrl).trim();
+  if(!ctaText){ cta.style.display="none"; } else {
+    cta.style.display=""; cta.textContent=ctaText;
+    if(ctaUrl.startsWith("#")||!ctaUrl){ cta.href=ctaUrl||"#contact"; cta.removeAttribute("target"); }
+    else { const u=safeUrl(ctaUrl); cta.href=u||"#contact"; if(u){cta.target="_blank";cta.rel="noopener";} }
+  }
 
   // hero stats
   const ms=(data.projects||[]).flatMap(pr=>(pr.metrics||[]).map(m=>({...m,project:pr.name})));
@@ -341,44 +412,65 @@ function renderSite(){
   $("#projects").innerHTML=(data.projects||[]).length?data.projects.map(pr=>{
     const roles=String(pr.roles||"").split(",").map(s=>s.trim()).filter(Boolean);
     const link=safeUrl(pr.link);
-    const metrics=(pr.metrics||[]).filter(m=>m.label).map(m=>{
+    const metrics=(pr.metrics||[]).filter(m=>m.label||(m.from!==""&&m.from!=null)||(m.to!==""&&m.to!=null)).map(m=>{
       const g=growth(m.from,m.to), mx=Math.max(Number(m.from)||0,Number(m.to)||0,1);
       const wa=Math.max(3,(Number(m.from)||0)/mx*100), wb=Math.max(3,(Number(m.to)||0)/mx*100);
-      return `<div class="metric"><div class="mtop"><span class="mlabel">${esc(m.label)}</span>${g!==null?`<span class="up">${g>=0?"▲ +":"▼ "}${g.toLocaleString()}%</span>`:""}</div>
+      return `<div class="metric"><div class="mtop"><span class="mlabel">${esc(m.label||"Growth")}</span>${g!==null?`<span class="up">${g>=0?"▲ +":"▼ "}${g.toLocaleString()}%</span>`:""}</div>
       <div class="bars">
         <div class="brow"><span>From</span><div class="track"><div class="fill a" data-w="${wa}"></div></div><b>${compact(m.from)}</b></div>
         <div class="brow"><span>To</span><div class="track"><div class="fill b" data-w="${wb}"></div></div><b>${compact(m.to)}</b></div>
       </div></div>`;}).join("");
     return `<article class="card">
-      <div class="ph"><div class="logo">${pr.logo?`<img src="${esc(pr.logo)}" alt="">`:esc((pr.name||"?")[0].toUpperCase())}</div>
+      <div class="ph"><div class="logo">${safeImg(pr.logo)?`<img src="${esc(pr.logo)}" alt="">`:esc((pr.name||"?")[0].toUpperCase())}</div>
       <div><h3>${esc(pr.name)}</h3>${link?`<a href="${esc(link)}" target="_blank" rel="noopener">Visit ↗</a>`:""}</div></div>
       ${roles.length?`<div class="roles">${roles.map(r=>`<span class="role">${esc(r)}</span>`).join("")}</div>`:""}
       ${pr.note?`<p class="note">${esc(pr.note)}</p>`:""}${metrics}</article>`;
   }).join(""):`<div class="empty">Projects will show up here.</div>`;
   animateBars();
 
-  // content
-  $("#contentList").innerHTML=(data.content||[]).length?data.content.map(c=>{
-    const u=safeUrl(c.url);
-    return `<article class="card ccard"><a ${u?`href="${esc(u)}" target="_blank" rel="noopener"`:""}>
-      <span class="ctag">${esc(c.platform||"Content")}</span><h3>${esc(c.title)}</h3>
-      ${c.note?`<p>${esc(c.note)}</p>`:""}${u?`<span class="go">View ↗</span>`:""}</a></article>`;
-  }).join(""):`<div class="empty">Best content will show up here.</div>`;
+  renderContent();
 
   // contacts
   $("#contactList").innerHTML=(data.contacts||[]).length?data.contacts.map(c=>{
     const u=safeUrl(c.url);
-    return `<a ${u?`href="${esc(u)}" target="_blank" rel="noopener"`:""}><small>${esc(c.label)}</small><b>${esc(c.text||c.url)}</b></a>`;
+    return `<a ${u?`href="${esc(u)}" target="_blank" rel="noopener"`:""}>
+      <div class="clg">${safeImg(c.logo)?`<img src="${esc(c.logo)}" alt="">`:esc((c.label||"?")[0].toUpperCase())}</div>
+      <div class="ct"><small>${esc(c.label)}</small><b>${esc(c.text||c.url)}</b></div></a>`;
   }).join(""):`<div class="empty">Contact details will show up here.</div>`;
 
   renderCarousel();
   renderTools();
+  applyDesign();
 }
 
 function animateBars(){
   const els=document.querySelectorAll(".fill[data-w]");
   const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.style.width=e.target.dataset.w+"%"; io.unobserve(e.target);} }),{threshold:.3});
   els.forEach(el=>io.observe(el));
+}
+
+/* ---------- content carousel ---------- */
+let cTimer=null, cPause=0;
+function renderContent(){
+  clearInterval(cTimer);
+  const box=$("#contentBox"), items=data.content||[];
+  if(!items.length){ box.innerHTML=`<div class="empty">Best content will show up here.</div>`; return; }
+  box.innerHTML=`<div class="cwrap"><button class="cnav l" aria-label="Previous">‹</button>
+    <div class="ctrack" id="ctrack">${items.map(c=>{
+      const u=safeUrl(c.url), th=safeImg(c.thumb);
+      return `<article class="cc"><a ${u?`href="${esc(u)}" target="_blank" rel="noopener"`:""}>
+        <div class="cthumb"${th?` style="background-image:url('${esc(th)}')"`:""}></div>
+        <div class="cbody"><span class="ctag">${esc(c.platform||"Content")}</span><h3>${esc(c.title)}</h3>
+        ${c.note?`<p>${esc(c.note)}</p>`:""}${u?`<span class="go">View ↗</span>`:""}</div></a></article>`;}).join("")}</div>
+    <button class="cnav r" aria-label="Next">›</button></div>`;
+  const tr=$("#ctrack");
+  const stepW=()=>{ const c=tr.querySelector(".cc"); return c?c.offsetWidth+16:300; };
+  const next=()=>{ if(tr.scrollWidth<=tr.clientWidth+4) return; const end=tr.scrollLeft+tr.clientWidth>=tr.scrollWidth-4; tr.scrollTo({left:end?0:tr.scrollLeft+stepW(),behavior:"smooth"}); };
+  box.querySelector(".cnav.l").onclick=()=>{ cPause=Date.now()+7000; tr.scrollTo({left:Math.max(0,tr.scrollLeft-stepW()),behavior:"smooth"}); };
+  box.querySelector(".cnav.r").onclick=()=>{ cPause=Date.now()+7000; next(); };
+  ["touchstart","mousedown","wheel"].forEach(ev=>tr.addEventListener(ev,()=>{cPause=Date.now()+7000},{passive:true}));
+  tr.addEventListener("mouseenter",()=>{cPause=Date.now()+7000});
+  cTimer=setInterval(()=>{ if(Date.now()>=cPause && $("#site").style.display!=="none") next(); },3500);
 }
 
 /* ---------- animations carousel ---------- */
@@ -394,14 +486,14 @@ function parseMedia(url){
 }
 let carTimer=null, carIdx=0, carPaused=false;
 function renderCarousel(){
-  clearInterval(carTimer); carIdx=0;
+  clearInterval(carTimer); carIdx=0; carPaused=false;
   const items=(data.animations||[]).filter(a=>a.url);
   const box=$("#animBox");
   if(!items.length){ box.innerHTML=`<div class="empty">Animations will show up here.</div>`; return; }
   const slides=items.map((a,i)=>{
-    const m=parseMedia(a.url), canEmbed=!!m.embed;
+    const m=parseMedia(a.url), canEmbed=!!m.embed, own=safeImg(a.thumb), th=own||m.thumb;
     return `<div class="slide" data-i="${i}" data-embed="${esc(m.embed||"")}">
-      ${m.thumb?`<div class="bg" style="background-image:url('${esc(m.thumb)}')"></div>`:""}<div class="shade"></div>
+      ${th?`<div class="bg" style="background-image:url('${esc(th)}')"></div>`:""}<div class="shade"></div>
       ${canEmbed?`<button class="play" aria-label="Play">▶</button>`:`<a class="play" style="text-decoration:none" href="${esc(safeUrl(m.url))}" target="_blank" rel="noopener" aria-label="Open">↗</a>`}
       <div class="cap">${esc(a.title||"")}</div></div>`;
   }).join("");
@@ -444,15 +536,58 @@ function renderTools(){
 function drawTools(list){
   $("#toolsBox").innerHTML=list.length?`<div class="grid">${list.map(t=>{
     const u=safeUrl(t.url);
-    return `<article class="card"><h3 style="margin:0 0 4px">${esc(t.name)}</h3>${t.note?`<p class="note" style="margin:0 0 8px">${esc(t.note)}</p>`:""}${u?`<a class="go" href="${esc(u)}" target="_blank" rel="noopener">Open ↗</a>`:""}</article>`;
+    return `<article class="card"><div class="ph"><div class="logo">${safeImg(t.logo)?`<img src="${esc(t.logo)}" alt="">`:esc((t.name||"?")[0].toUpperCase())}</div>
+      <div><h3>${esc(t.name)}</h3>${u?`<a href="${esc(u)}" target="_blank" rel="noopener">Open ↗</a>`:""}</div></div>
+      ${t.note?`<p class="note" style="margin:0">${esc(t.note)}</p>`:""}</article>`;
   }).join("")}</div>`:`<div class="empty">No tools added yet.</div>`;
 }
+
+/* ---------- design: backgrounds + fonts ---------- */
+function sectionEl(key){ return key==="home"?$("#home"):$("#"+key); }
+function applyDesign(){
+  normalize();
+  const f=data.fonts, bgs=data.bg, rs=document.documentElement.style;
+  const used=[f.heading,f.body,...Object.values(bgs).map(b=>b&&b.font)].filter(Boolean);
+  loadFonts(used);
+  if(f.body) rs.setProperty("--fb",fam(f.body)); else rs.removeProperty("--fb");
+  if(f.heading) rs.setProperty("--fh",fam(f.heading)); else rs.removeProperty("--fh");
+  SECTIONS.forEach(([key])=>{
+    const el=sectionEl(key); if(!el) return;
+    const b=bgs[key]||{}, layer=el.querySelector(":scope > .bgl");
+    const img=safeImg(b.img), vid=videoSrc(b.video), has=!!(img||vid);
+    let html="";
+    if(img) html+=`<div class="bgi" style="background-image:url('${esc(img)}')"></div>`;
+    if(vid) html+=`<video src="${esc(vid)}" autoplay muted loop playsinline></video>`;
+    if(has){
+      const a=Math.max(0,Math.min(90,b.veil===undefined?35:Number(b.veil)))/100, c=b.veilColor||"dark";
+      const rgb=c==="light"?"255,255,255":(c==="purple"?"109,40,217":"20,8,50");
+      html+=`<div class="veil" style="background:rgba(${rgb},${a})"></div>`;
+    }
+    layer.innerHTML=html;
+    const v=layer.querySelector("video"); if(v){ v.muted=true; const pr=v.play&&v.play(); if(pr&&pr.catch) pr.catch(()=>{}); }
+    el.classList.remove("txl","txd");
+    const mode=(b.text&&b.text!=="auto")?b.text:(has?((b.veilColor==="light")?"dark":"light"):null);
+    if(mode==="light") el.classList.add("txl"); else if(mode==="dark") el.classList.add("txd");
+    if(b.font && FONTS[b.font]!==undefined){ el.style.setProperty("--fb",fam(b.font)); el.style.setProperty("--fh",fam(b.font)); }
+    else { el.style.removeProperty("--fb"); el.style.removeProperty("--fh"); }
+  });
+}
+
+/* =========================================================
+   ROUTING (only swaps views, never re-renders on anchor taps)
+   ========================================================= */
+function showSite(){ $("#admin").style.display="none"; $("#site").style.display="block"; renderSite(); view="site"; }
+function route(){
+  if(location.hash==="#admin"){ showAdmin(); view="admin"; }
+  else if(view!=="site") showSite();
+}
+window.addEventListener("hashchange",route);
 
 /* =========================================================
    ADMIN
    ========================================================= */
 let adminTools=null, toolsPw="", activeTab="profile";
-const TABS=[["profile","Profile"],["projects","Projects"],["content","Content"],["animations","Animations"],["contacts","Contact"],["tools","Tools"]];
+const TABS=[["profile","Profile"],["projects","Projects"],["content","Content"],["animations","Animations"],["contacts","Contact"],["tools","Tools"],["design","Design"]];
 
 function showAdmin(){
   $("#site").style.display="none"; $("#admin").style.display="block";
@@ -461,18 +596,37 @@ function showAdmin(){
   $("#adminApp").style.display=need?"none":"block";
   if(!FIREBASE_CONFIG){
     const b=$("#demoBanner"); b.style.display="block";
-    b.innerHTML="<b>Demo mode.</b> You can try everything, but nothing is saved until you add your free Firebase config (see the setup steps).";
+    b.innerHTML="<b>Demo mode.</b> You can try everything, but nothing is saved until a Firebase config is added.";
   } else $("#demoBanner").style.display="none";
   if(!need) buildAdmin();
 }
-function showSite(){ $("#admin").style.display="none"; $("#site").style.display="block"; renderSite(); }
-function route(){ if(location.hash==="#admin") showAdmin(); else showSite(); }
-window.addEventListener("hashchange",route);
+
+/* measure how big each section really is on this screen */
+function measureSections(){
+  if(!siteRendered) renderSite();
+  const site=$("#site"), prev=site.style.cssText;
+  site.style.cssText="display:block;visibility:hidden;position:absolute;left:0;top:0;width:100%";
+  const out={};
+  SECTIONS.forEach(([k])=>{ const el=sectionEl(k); if(el){ const r=el.getBoundingClientRect(); out[k]=[Math.round(r.width),Math.round(r.height)]; } });
+  site.style.cssText=prev;
+  return out;
+}
+
+const fontSelect=(attrs,cur,def)=>`<div class="fsel"><select class="in" ${attrs}><option value="">${def}</option>${Object.keys(FONTS).map(n=>`<option value="${esc(n)}"${n===cur?" selected":""}>${esc(n)}</option>`).join("")}</select>
+  <div class="fprev" style="${cur?`font-family:${esc(fam(cur))}`:""}">The quick brown fox jumps over the lazy dog</div></div>`;
+
+function upField(label,ul,i,field,mode,cur,hint){
+  const ok=safeImg(cur), cls=mode==="logo"?"lp":"tp";
+  return `<label class="f">${label}</label><div class="lg">${ok?`<img class="${cls}" src="${esc(cur)}" alt="">`:`<div class="${cls} ph0">No image</div>`}
+    <div style="flex:1;min-width:0"><input type="file" accept="image/*" data-up="${mode}" data-ul="${ul}" data-ui="${i}" data-uf="${field}">
+    ${ok?`<div><button class="btn danger sm" style="margin-top:6px" data-rm="${ul}|${i}|${field}">Remove</button></div>`:""}</div></div>${hint?`<p class="hint">${hint}</p>`:""}`;
+}
 
 function buildAdmin(){
   $("#tabs").innerHTML=TABS.map(([k,l])=>`<button data-t="${k}" class="${k===activeTab?"on":""}">${l}</button>`).join("");
   $("#tabs").onclick=e=>{ const b=e.target.closest("button"); if(!b) return; activeTab=b.dataset.t; buildAdmin(); };
-  const p=data.profile||(data.profile={});
+  normalize();
+  const p=data.profile;
   const panels={
     profile:()=>`<div class="item">
       <label class="f">Your name</label><input class="in" data-p="name" value="${esc(p.name)}">
@@ -480,11 +634,15 @@ function buildAdmin(){
       <label class="f">Tagline</label><textarea class="in" data-p="tagline">${esc(p.tagline)}</textarea>
       <label class="f">Your roles / skills (separate with commas)</label>
       <textarea class="in" id="rolesIn">${esc((data.roles||[]).join(", "))}</textarea>
-      <p class="hint">Type any roles you want. They appear as chips at the top of the site.</p></div>`,
+      <p class="hint">Type any roles you want. They appear as chips at the top of the site.</p></div>
+      <div class="item"><b style="color:var(--p700)">Top bar &amp; main button</b>
+      <label class="f">First word in the top bar</label><input class="in" data-p="navLabel" value="${esc(p.navLabel??"Homepage")}">
+      <label class="f">Main button text (leave empty to hide the button)</label><input class="in" data-p="ctaText" value="${esc(p.ctaText??"Work with me")}">
+      <label class="f">Main button goes to</label><input class="in" data-p="ctaUrl" value="${esc(p.ctaUrl??"#contact")}" placeholder="#contact or https://t.me/you or mailto:you@mail.com">
+      <p class="hint">Use #contact, #analytics, #content, #animations or #tools to jump to a section, or paste any link (Telegram, X, email).</p></div>`,
     projects:()=>listPanel("projects","Project",(it,i)=>`
       <label class="f">Project name</label><input class="in" data-l="projects" data-i="${i}" data-k="name" value="${esc(it.name)}">
-      <label class="f">Logo</label><div class="lg"><div class="logo">${it.logo?`<img src="${esc(it.logo)}" alt="">`:"?"}</div>
-        <input type="file" accept="image/*" data-logo="${i}"></div>
+      ${upField("Logo","projects",i,"logo","logo",it.logo,"Square works best, around 200 × 200 px.")}
       <label class="f">My roles in this project (commas)</label><input class="in" data-l="projects" data-i="${i}" data-k="roles" value="${esc(it.roles)}">
       <label class="f">What I did</label><textarea class="in" data-l="projects" data-i="${i}" data-k="note">${esc(it.note)}</textarea>
       <label class="f">Link (optional)</label><input class="in" data-l="projects" data-i="${i}" data-k="link" value="${esc(it.link)}" placeholder="https://">
@@ -498,20 +656,23 @@ function buildAdmin(){
       {name:"",logo:"",roles:"",note:"",link:"",metrics:[{label:"",from:"",to:""}]}),
     content:()=>listPanel("content","Content",(it,i)=>`
       <label class="f">Title</label><input class="in" data-l="content" data-i="${i}" data-k="title" value="${esc(it.title)}">
+      ${upField("Thumbnail","content",i,"thumb","thumb",it.thumb,"Best size 1280 × 720 px (16:9, landscape).")}
       <label class="f">Link</label><input class="in" data-l="content" data-i="${i}" data-k="url" value="${esc(it.url)}" placeholder="https://">
       <label class="f">Platform (X, YouTube, Blog...)</label><input class="in" data-l="content" data-i="${i}" data-k="platform" value="${esc(it.platform)}">
       <label class="f">Short note (results, why it's good)</label><textarea class="in" data-l="content" data-i="${i}" data-k="note">${esc(it.note)}</textarea>`,
-      {title:"",url:"",platform:"",note:""}),
+      {title:"",url:"",platform:"",note:"",thumb:""}),
     animations:()=>listPanel("animations","Animation",(it,i)=>`
       <label class="f">Title</label><input class="in" data-l="animations" data-i="${i}" data-k="title" value="${esc(it.title)}">
+      ${upField("Thumbnail","animations",i,"thumb","thumb",it.thumb,"Best size 1280 × 720 px (16:9). If empty, YouTube links use their own preview.")}
       <label class="f">Video link</label><input class="in" data-l="animations" data-i="${i}" data-k="url" value="${esc(it.url)}" placeholder="YouTube, Google Drive or X link">
       <p class="hint">YouTube and Drive play right on the site. For Drive, set sharing to "Anyone with the link". X links open on X.</p>`,
-      {title:"",url:""}),
+      {title:"",url:"",thumb:""}),
     contacts:()=>listPanel("contacts","Contact",(it,i)=>`
       <label class="f">Label (Email, Telegram, X...)</label><input class="in" data-l="contacts" data-i="${i}" data-k="label" value="${esc(it.label)}">
+      ${upField("Logo","contacts",i,"logo","logo",it.logo,"Square works best, around 200 × 200 px.")}
       <label class="f">Link (mailto:you@mail.com, https://t.me/you, https://x.com/you)</label><input class="in" data-l="contacts" data-i="${i}" data-k="url" value="${esc(it.url)}">
       <label class="f">Text shown</label><input class="in" data-l="contacts" data-i="${i}" data-k="text" value="${esc(it.text)}">`,
-      {label:"",url:"",text:""}),
+      {label:"",url:"",text:"",logo:""}),
     tools:()=>{
       const locked = data.toolsEnc && !adminTools;
       return `<div class="item"><label class="f">Tools password (visitors need this)</label>
@@ -519,10 +680,40 @@ function buildAdmin(){
         <p class="hint">Your tools are encrypted with this password before saving. If you forget it, you'll need to re-enter your tools.</p>
         ${locked?`<button class="btn pri sm" id="unlockT" style="margin-top:10px">Unlock existing tools</button><div class="err" id="uErr"></div>`:""}</div>
         ${locked?"":toolsList()}`;
-    }
+    },
+    design:()=>designPanel()
   };
   $("#panels").innerHTML=`<div class="panel on">${panels[activeTab]()}</div>`;
-  bindAdmin();
+  bindAdmin(); updateMeter();
+}
+
+function designPanel(){
+  const f=data.fonts, sizes=measureSections();
+  const global=`<div class="item"><b style="color:var(--p700)">Fonts for the whole site</b>
+    <label class="f">Headings and names</label>${fontSelect('data-fg="heading"',f.heading,"Default")}
+    <label class="f">Everything else</label>${fontSelect('data-fg="body"',f.body,"Default")}
+    <p class="hint">Fonts are free Google Fonts. You can also pick a different font for a single section below.</p></div>`;
+  const secs=SECTIONS.map(([k,label])=>{
+    const b=data.bg[k]||{}, sz=sizes[k]||[0,0], has=safeImg(b.img);
+    return `<div class="item"><div class="hd"><b>${label}</b></div>
+      <div class="sizebox">Right now this section is <b>${sz[0]} × ${sz[1]} px</b> on your screen.<br>
+      Best background size: <b>1280 × 800 px</b> (landscape JPG). Keep the important part in the middle, because phones crop the sides. The panel shrinks big photos automatically.</div>
+      ${has?`<div class="lg" style="margin-top:8px"><img class="tp" src="${esc(b.img)}" alt=""><div class="hint" style="margin:0">Saved image: ${b.iw||"?"} × ${b.ih||"?"} px, about ${b.kb||"?"} KB</div></div>`:""}
+      <label class="f">Background image</label>
+      <input type="file" accept="image/*" data-up="bg" data-ul="bg" data-ui="${k}" data-uf="img">
+      ${has?`<div><button class="btn danger sm" style="margin-top:6px" data-rm="bg|${k}|img">Remove image</button></div>`:""}
+      <label class="f">Background video (optional)</label>
+      <input class="in" data-bs="${k}" data-bk="video" value="${esc(b.video||"")}" placeholder="bg-video.mp4 or https://.../video.mp4">
+      <p class="hint">Upload a short .mp4 (under 5 MB) to your GitHub repo next to index.html, then type its file name here. YouTube and Drive links don't work for backgrounds.</p>
+      <label class="f">Dark or light layer over the background (keeps text readable)</label>
+      <select class="in" data-bs="${k}" data-bk="veilColor">${[["dark","Dark"],["purple","Purple"],["light","White"]].map(([v,l])=>`<option value="${v}"${(b.veilColor||"dark")===v?" selected":""}>${l}</option>`).join("")}</select>
+      <label class="f">Layer strength</label>
+      <div class="rg"><input type="range" min="0" max="90" value="${b.veil===undefined?35:b.veil}" data-bs="${k}" data-bk="veil"><span>${b.veil===undefined?35:b.veil}%</span></div>
+      <label class="f">Title and text colour</label>
+      <select class="in" data-bs="${k}" data-bk="text">${[["auto","Automatic"],["light","White"],["dark","Dark"]].map(([v,l])=>`<option value="${v}"${(b.text||"auto")===v?" selected":""}>${l}</option>`).join("")}</select>
+      <label class="f">Font for this section</label>${fontSelect(`data-bs="${k}" data-bk="font"`,b.font,"Same as the whole site")}</div>`;
+  }).join("");
+  return global+secs;
 }
 
 function listPanel(key,label,fn,blank){
@@ -538,16 +729,30 @@ function toolsList(){
     <button class="btn ghost sm" data-tmv="${i}:-1">↑</button><button class="btn ghost sm" data-tmv="${i}:1">↓</button>
     <button class="btn danger sm" data-tdel="${i}">Delete</button></div>
     <label class="f">Name</label><input class="in" data-ti="${i}" data-tk="name" value="${esc(it.name)}">
+    ${upField("Logo","tools",i,"logo","logo",it.logo,"Square works best, around 200 × 200 px.")}
     <label class="f">What I use it for</label><input class="in" data-ti="${i}" data-tk="note" value="${esc(it.note)}">
     <label class="f">Link (optional)</label><input class="in" data-ti="${i}" data-tk="url" value="${esc(it.url)}"></div>`).join("")
     +`<button class="btn pri" id="addTool">+ Add tool</button>`;
+}
+
+function targetOf(ul,ui){
+  if(ul==="tools") return adminTools&&adminTools[+ui];
+  if(ul==="bg") return data.bg[ui]||(data.bg[ui]={});
+  return data[ul]&&data[ul][+ui];
 }
 
 function bindAdmin(){
   const root=$("#panels");
   root.oninput=e=>{
     const t=e.target;
-    if(t.dataset.p){ data.profile[t.dataset.p]=t.value; }
+    if(t.dataset.fg){ data.fonts[t.dataset.fg]=t.value; previewFont(t); }
+    else if(t.dataset.bs){
+      const b=data.bg[t.dataset.bs]||(data.bg[t.dataset.bs]={}), k=t.dataset.bk;
+      b[k]= k==="veil"?Number(t.value):t.value;
+      if(k==="veil"&&t.nextElementSibling) t.nextElementSibling.textContent=t.value+"%";
+      if(k==="font") previewFont(t);
+    }
+    else if(t.dataset.p){ data.profile[t.dataset.p]=t.value; }
     else if(t.id==="rolesIn"){ data.roles=t.value.split(",").map(s=>s.trim()).filter(Boolean); }
     else if(t.dataset.l){ data[t.dataset.l][+t.dataset.i][t.dataset.k]=t.value; }
     else if(t.dataset.mi!==undefined){ data.projects[+t.dataset.mi].metrics[+t.dataset.mj][t.dataset.mk]=t.value; }
@@ -557,9 +762,15 @@ function bindAdmin(){
   };
   root.onchange=async e=>{
     const t=e.target;
-    if(t.dataset.logo!==undefined && t.files[0]){
-      try{ data.projects[+t.dataset.logo].logo=await resizeImage(t.files[0],160); markDirty(); buildAdmin(); }
-      catch{ alert("Could not read that image. Try a PNG or JPG."); }
+    if(t.dataset.up && t.files[0]){
+      const tg=targetOf(t.dataset.ul,t.dataset.ui); if(!tg) return;
+      $("#saveMsg").textContent="Preparing image...";
+      try{
+        const r=await resizeImage(t.files[0],t.dataset.up);
+        tg[t.dataset.uf]=r.url;
+        if(t.dataset.ul==="bg"){ tg.iw=r.w; tg.ih=r.h; tg.kb=r.kb; if(tg.veil===undefined) tg.veil=35; }
+        markDirty(); buildAdmin();
+      }catch{ $("#saveMsg").textContent="Could not read that image. Try a PNG or JPG."; }
     }
   };
   root.onclick=async e=>{
@@ -568,9 +779,10 @@ function bindAdmin(){
     if(d.add){ data[d.add].push(JSON.parse(d.blank)); markDirty(); buildAdmin(); }
     else if(d.del){ const [k,i]=d.del.split(":"); if(confirm("Delete this?")){ data[k].splice(+i,1); markDirty(); buildAdmin(); } }
     else if(d.mv){ const [k,i,dir]=d.mv.split(":"); move(data[k],+i,+dir); markDirty(); buildAdmin(); }
+    else if(d.rm){ const [ul,ui,uf]=d.rm.split("|"); const tg=targetOf(ul,ui); if(tg){ tg[uf]=""; if(ul==="bg"){ tg.iw=tg.ih=tg.kb=undefined; } markDirty(); buildAdmin(); } }
     else if(d.addm!==undefined){ data.projects[+d.addm].metrics.push({label:"",from:"",to:""}); markDirty(); buildAdmin(); }
     else if(d.delm){ const [i,j]=d.delm.split(":"); data.projects[+i].metrics.splice(+j,1); markDirty(); buildAdmin(); }
-    else if(b.id==="addTool"){ adminTools.push({name:"",note:"",url:""}); markDirty(); buildAdmin(); }
+    else if(b.id==="addTool"){ adminTools.push({name:"",note:"",url:"",logo:""}); markDirty(); buildAdmin(); }
     else if(d.tdel!==undefined){ adminTools.splice(+d.tdel,1); markDirty(); buildAdmin(); }
     else if(d.tmv){ const [i,dir]=d.tmv.split(":"); move(adminTools,+i,+dir); markDirty(); buildAdmin(); }
     else if(b.id==="unlockT"){
@@ -580,16 +792,39 @@ function bindAdmin(){
     }
   };
 }
+function previewFont(sel){
+  const n=sel.value, pv=sel.closest(".fsel")&&sel.closest(".fsel").querySelector(".fprev");
+  if(n) loadFonts([n]); if(pv) pv.style.fontFamily=n?fam(n):"";
+}
 function move(arr,i,dir){ const j=i+dir; if(j<0||j>=arr.length) return; [arr[i],arr[j]]=[arr[j],arr[i]]; }
-function markDirty(){ $("#saveMsg").textContent="Unsaved changes. Press Save & publish."; }
 
-function resizeImage(file,max){
+function usageBytes(){
+  const {toolsEnc,...rest}=data; let n=JSON.stringify(rest).length;
+  if(adminTools) n+=Math.round(JSON.stringify(adminTools).length*1.8); else if(toolsEnc) n+=JSON.stringify(toolsEnc).length;
+  return n;
+}
+function updateMeter(){
+  const n=usageBytes(), kb=Math.round(n/1024), m=$("#meter");
+  m.textContent=`Storage used: ${kb} KB of about 1000 KB`;
+  m.className="meter"+(n>1000000?" bad":(n>800000?" warn":""));
+  if(n>1000000) m.textContent+=" (too much: remove or shrink some images)";
+  else if(n>800000) m.textContent+=" (getting full)";
+}
+function markDirty(){ $("#saveMsg").textContent="Unsaved changes. Press Save & publish."; updateMeter(); }
+
+function resizeImage(file,mode){
+  const P={logo:{max:160,fmt:"image/webp",q:.85,fill:null},thumb:{max:640,fmt:"image/jpeg",q:.72,fill:"#fff"},bg:{max:1280,fmt:"image/jpeg",q:.6,fill:"#fff"}}[mode]||{max:640,fmt:"image/jpeg",q:.72,fill:"#fff"};
   return new Promise((res,rej)=>{
     const img=new Image(), url=URL.createObjectURL(file);
-    img.onload=()=>{ const s=Math.min(1,max/Math.max(img.width,img.height));
-      const c=document.createElement("canvas"); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
-      c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c.toDataURL("image/png")); };
-    img.onerror=rej; img.src=url;
+    img.onload=()=>{
+      if(!img.width||!img.height){ URL.revokeObjectURL(url); return rej(new Error("size")); }
+      const s=Math.min(1,P.max/Math.max(img.width,img.height)), w=Math.round(img.width*s), h=Math.round(img.height*s);
+      const c=document.createElement("canvas"); c.width=w; c.height=h; const x=c.getContext("2d");
+      if(P.fill){ x.fillStyle=P.fill; x.fillRect(0,0,w,h); } x.drawImage(img,0,0,w,h); URL.revokeObjectURL(url);
+      let out=c.toDataURL(P.fmt,P.q); if(mode==="logo"&&!out.startsWith("data:image/webp")) out=c.toDataURL("image/png");
+      res({url:out,w,h,kb:Math.round(out.length*0.75/1024)});
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error("load")); }; img.src=url;
   });
 }
 
@@ -604,11 +839,12 @@ async function save(){
       }
       toolsOpen=null;
     }
+    if(JSON.stringify(data).length>1000000){ msg.textContent="Too much image data to save. Remove or shrink some images."; btn.disabled=false; updateMeter(); return; }
     if(!FIREBASE_CONFIG){ msg.textContent="Demo mode: updated here only, not saved."; btn.disabled=false; return; }
-    await fb.setDoc(fb.doc(db,"site","main"),clone(data));
+    await fb.setDoc(fb.doc(db,"site","main"),JSON.parse(JSON.stringify(data,(k,v)=>v===undefined?null:v)));
     msg.textContent="Saved. Your site is updated.";
   }catch(e){ console.error(e); msg.textContent="Could not save: "+(e.message||"check your Firebase rules."); }
-  btn.disabled=false;
+  btn.disabled=false; updateMeter();
 }
 
 /* admin wiring */
