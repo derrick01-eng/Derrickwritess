@@ -113,6 +113,18 @@ section.s.alt{background:var(--p50)}
 .cnav{position:absolute;top:38%;z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.95);color:var(--p700);font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.18)}
 .cnav.l{left:-6px}.cnav.r{right:-6px}
 
+/* ---------- testimonials ---------- */
+.tc{flex:0 0 min(86vw,340px);scroll-snap-align:start;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.thd{display:flex;align-items:center;gap:12px}
+.av{width:50px;height:50px;border-radius:50%;background:var(--p100);border:2px solid var(--p200);display:grid;place-items:center;font-weight:800;color:var(--p700);overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.tw b{display:block;line-height:1.2}
+.tw span{display:block;font-size:13px;color:var(--p600);font-weight:600;margin-top:2px}
+.tq{margin:14px 0 0;font-size:15px;white-space:pre-line;border-left:3px solid var(--p500);padding-left:12px;color:#3b3750}
+.tshot{width:100%;border-radius:12px;border:1px solid var(--line);margin-top:14px;cursor:zoom-in;display:block}
+#lb{position:fixed;inset:0;background:rgba(10,5,30,.92);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;cursor:zoom-out}
+#lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+
 /* ---------- animations carousel ---------- */
 .car{position:relative;border-radius:22px;overflow:hidden;background:var(--p900);box-shadow:0 20px 50px -20px rgba(46,16,101,.5)}
 .trackc{display:flex;transition:transform .6s cubic-bezier(.3,.7,.2,1)}
@@ -215,12 +227,17 @@ textarea.in{min-height:70px;resize:vertical}
     <div id="animBox"></div>
   </div></section>
 
-  <section class="s alt" id="contact"><div class="bgl"></div><div class="wrap">
+  <section class="s alt" id="testimonials"><div class="bgl"></div><div class="wrap">
+    <div class="sh"><h2>Testimonials</h2><p>What people I've worked with say.</p></div>
+    <div id="testiBox"></div>
+  </div></section>
+
+  <section class="s" id="contact"><div class="bgl"></div><div class="wrap">
     <div class="sh"><h2>Contact</h2><p>Let's build something.</p></div>
     <div class="contacts" id="contactList"></div>
   </div></section>
 
-  <section class="s" id="tools"><div class="bgl"></div><div class="wrap">
+  <section class="s alt" id="tools"><div class="bgl"></div><div class="wrap">
     <div class="sh"><h2>Tools</h2><p>The stack I work with.</p></div>
     <div id="toolsBox"></div>
   </div></section>
@@ -255,6 +272,8 @@ textarea.in{min-height:70px;resize:vertical}
   </div>
 </div>
 
+<div id="lb" aria-hidden="true"></div>
+
 <script type="module">
 /* =========================================================
    1) SETTINGS: your free Firebase config
@@ -275,7 +294,7 @@ const FONTS = {
   "Outfit":"400;600;700;800","Sora":"400;600;700;800","Manrope":"400;600;700;800","Caveat":"400;600;700",
   "Bebas Neue":"","Pacifico":"","Archivo Black":""
 };
-const SECTIONS = [["home","Home (top banner)"],["analytics","Analytics"],["content","Content"],["animations","Animations"],["contact","Contact"],["tools","Tools"]];
+const SECTIONS = [["home","Home (top banner)"],["analytics","Analytics"],["content","Content"],["animations","Animations"],["testimonials","Testimonials"],["contact","Contact"],["tools","Tools"]];
 
 /* ---------- default / demo data ---------- */
 const DEMO = {
@@ -292,6 +311,7 @@ const DEMO = {
   animations:[
     {title:"Sample animation (paste a YouTube, Drive or X link in admin)",url:"https://www.youtube.com/watch?v=dQw4w9WgXcQ",thumb:""}
   ],
+  testimonials:[],
   contacts:[
     {label:"Email",url:"mailto:you@example.com",text:"you@example.com",logo:""},
     {label:"Telegram",url:"https://t.me/yourhandle",text:"@yourhandle",logo:""}
@@ -345,7 +365,7 @@ async function decryptJSON(blob,pw){
 }
 
 /* ---------- firebase ---------- */
-function normalize(){ data.bg=data.bg||{}; data.fonts=data.fonts||{}; data.profile=data.profile||{}; ["roles","projects","content","animations","contacts"].forEach(k=>{ if(!Array.isArray(data[k])) data[k]=[]; }); }
+function normalize(){ data.bg=data.bg||{}; data.fonts=data.fonts||{}; data.profile=data.profile||{}; ["roles","projects","content","animations","testimonials","contacts"].forEach(k=>{ if(!Array.isArray(data[k])) data[k]=[]; }); }
 async function initFirebase(){
   if(!FIREBASE_CONFIG) return;
   const v="10.12.2", base=`https://www.gstatic.com/firebasejs/${v}/`;
@@ -361,14 +381,14 @@ async function initFirebase(){
   }catch(e){ console.warn("Could not load data",e); data=emptyData(); }
   normalize();
 }
-function emptyData(){ return {profile:{name:"Your Name",eyebrow:"Proof of Work",tagline:"Add your tagline in the admin panel."},roles:[],projects:[],content:[],animations:[],contacts:[],bg:{},fonts:{},toolsEnc:null}; }
+function emptyData(){ return {profile:{name:"Your Name",eyebrow:"Proof of Work",tagline:"Add your tagline in the admin panel."},roles:[],projects:[],content:[],animations:[],testimonials:[],contacts:[],bg:{},fonts:{},toolsEnc:null}; }
 
 /* =========================================================
    PUBLIC RENDER
    ========================================================= */
 function renderTicker(){
   const p=data.profile||{};
-  const items=[[p.navLabel||"Homepage","#top"],["Analytics","#analytics"],["Content","#content"],["Animations","#animations"],["Contact","#contact"],["🔒 Tools","#tools"]];
+  const items=[[p.navLabel||"Homepage","#top"],["Analytics","#analytics"],["Content","#content"],["Animations","#animations"],["Testimonials","#testimonials"],["Contact","#contact"],["🔒 Tools","#tools"]];
   const set=(hidden)=>`<div class="tkset"${hidden?' aria-hidden="true"':""}>${items.map(([l,h])=>`<a class="rib" href="${h}"${hidden?' tabindex="-1"':""}>${esc(l)}</a>`).join("")}</div>`;
   const tk=$("#tk"); tk.innerHTML=set(false)+set(true)+set(true)+set(true)+set(true)+set(true);
   if(!tk._bound){
@@ -439,6 +459,7 @@ function renderSite(){
   }).join(""):`<div class="empty">Contact details will show up here.</div>`;
 
   renderCarousel();
+  renderTestimonials();
   renderTools();
   applyDesign();
 }
@@ -472,6 +493,36 @@ function renderContent(){
   tr.addEventListener("mouseenter",()=>{cPause=Date.now()+7000});
   cTimer=setInterval(()=>{ if(Date.now()>=cPause && $("#site").style.display!=="none") next(); },3500);
 }
+
+/* ---------- testimonials carousel ---------- */
+let tTimer=null, tPause=0;
+function renderTestimonials(){
+  clearInterval(tTimer);
+  const box=$("#testiBox"), items=(data.testimonials||[]).filter(t=>t.name||t.text||t.shot);
+  if(!items.length){ box.innerHTML=`<div class="empty">Testimonials will show up here.</div>`; return; }
+  box.innerHTML=`<div class="cwrap"><button class="cnav l" aria-label="Previous">‹</button>
+    <div class="ctrack" id="ttrack">${items.map(t=>{
+      const av=safeImg(t.avatar), shot=safeImg(t.shot);
+      return `<article class="tc"><div class="thd"><div class="av">${av?`<img src="${esc(av)}" alt="">`:esc((t.name||"?")[0].toUpperCase())}</div>
+        <div class="tw"><b>${esc(t.name)}</b>${t.role?`<span>${esc(t.role)}</span>`:""}</div></div>
+        ${t.text?`<p class="tq">${esc(t.text)}</p>`:""}${shot?`<img class="tshot" src="${esc(shot)}" alt="Screenshot of testimonial" loading="lazy">`:""}</article>`;}).join("")}</div>
+    <button class="cnav r" aria-label="Next">›</button></div>`;
+  const tr=$("#ttrack");
+  const stepW=()=>{ const c=tr.querySelector(".tc"); return c?c.offsetWidth+16:300; };
+  const next=()=>{ if(tr.scrollWidth<=tr.clientWidth+4) return; const end=tr.scrollLeft+tr.clientWidth>=tr.scrollWidth-4; tr.scrollTo({left:end?0:tr.scrollLeft+stepW(),behavior:"smooth"}); };
+  box.querySelector(".cnav.l").onclick=()=>{ tPause=Date.now()+8000; tr.scrollTo({left:Math.max(0,tr.scrollLeft-stepW()),behavior:"smooth"}); };
+  box.querySelector(".cnav.r").onclick=()=>{ tPause=Date.now()+8000; next(); };
+  ["touchstart","mousedown","wheel"].forEach(ev=>tr.addEventListener(ev,()=>{tPause=Date.now()+8000},{passive:true}));
+  tr.addEventListener("mouseenter",()=>{tPause=Date.now()+8000});
+  tTimer=setInterval(()=>{ if(Date.now()>=tPause && $("#site").style.display!=="none") next(); },4500);
+}
+/* tap a screenshot to see it full size */
+document.addEventListener("click",e=>{
+  const im=e.target.closest&&e.target.closest(".tshot"), lb=$("#lb");
+  if(im){ lb.textContent=""; const i=document.createElement("img"); i.src=im.src; i.alt=""; lb.appendChild(i); lb.style.display="flex"; }
+  else if(e.target.closest&&e.target.closest("#lb")){ lb.style.display="none"; lb.textContent=""; }
+});
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ const lb=$("#lb"); lb.style.display="none"; lb.textContent=""; } });
 
 /* ---------- animations carousel ---------- */
 function parseMedia(url){
@@ -587,7 +638,7 @@ window.addEventListener("hashchange",route);
    ADMIN
    ========================================================= */
 let adminTools=null, toolsPw="", activeTab="profile";
-const TABS=[["profile","Profile"],["projects","Projects"],["content","Content"],["animations","Animations"],["contacts","Contact"],["tools","Tools"],["design","Design"]];
+const TABS=[["profile","Profile"],["projects","Projects"],["content","Content"],["animations","Animations"],["testimonials","Testimonials"],["contacts","Contact"],["tools","Tools"],["design","Design"]];
 
 function showAdmin(){
   $("#site").style.display="none"; $("#admin").style.display="block";
@@ -667,6 +718,14 @@ function buildAdmin(){
       <label class="f">Video link</label><input class="in" data-l="animations" data-i="${i}" data-k="url" value="${esc(it.url)}" placeholder="YouTube, Google Drive or X link">
       <p class="hint">YouTube and Drive play right on the site. For Drive, set sharing to "Anyone with the link". X links open on X.</p>`,
       {title:"",url:"",thumb:""}),
+    testimonials:()=>listPanel("testimonials","Testimonial",(it,i)=>`
+      <label class="f">Name</label><input class="in" data-l="testimonials" data-i="${i}" data-k="name" value="${esc(it.name)}">
+      ${upField("Photo of the person","testimonials",i,"avatar","logo",it.avatar,"A square photo works best, around 200 × 200 px.")}
+      <label class="f">Their role in the project</label><input class="in" data-l="testimonials" data-i="${i}" data-k="role" value="${esc(it.role)}" placeholder="e.g. Marketing Lead at Splyce Finance">
+      <label class="f">What they said (written)</label><textarea class="in" data-l="testimonials" data-i="${i}" data-k="text">${esc(it.text)}</textarea>
+      ${upField("Screenshot of their message (optional)","testimonials",i,"shot","shot",it.shot,"A screenshot of their comment or DM. At least 900 px wide so it stays readable. Visitors can tap it to enlarge.")}
+      <p class="hint">You can use the written text, the screenshot, or both.</p>`,
+      {name:"",role:"",avatar:"",text:"",shot:""}),
     contacts:()=>listPanel("contacts","Contact",(it,i)=>`
       <label class="f">Label (Email, Telegram, X...)</label><input class="in" data-l="contacts" data-i="${i}" data-k="label" value="${esc(it.label)}">
       ${upField("Logo","contacts",i,"logo","logo",it.logo,"Square works best, around 200 × 200 px.")}
@@ -678,7 +737,9 @@ function buildAdmin(){
       return `<div class="item"><label class="f">Tools password (visitors need this)</label>
         <input class="in" id="tpw" type="text" value="${esc(toolsPw)}" placeholder="Choose a password" autocomplete="off">
         <p class="hint">Your tools are encrypted with this password before saving. If you forget it, you'll need to re-enter your tools.</p>
-        ${locked?`<button class="btn pri sm" id="unlockT" style="margin-top:10px">Unlock existing tools</button><div class="err" id="uErr"></div>`:""}</div>
+        ${locked?`<button class="btn pri sm" id="unlockT" style="margin-top:10px">Unlock existing tools</button><div class="err" id="uErr"></div>
+        <p class="hint" style="margin-top:14px">Forgot the password? It can't be recovered, but you can start over with a new one.</p>
+        <button class="btn danger sm" id="resetT" style="margin-top:6px">Forgot password: start over</button>`:""}</div>
         ${locked?"":toolsList()}`;
     },
     design:()=>designPanel()
@@ -785,6 +846,9 @@ function bindAdmin(){
     else if(b.id==="addTool"){ adminTools.push({name:"",note:"",url:"",logo:""}); markDirty(); buildAdmin(); }
     else if(d.tdel!==undefined){ adminTools.splice(+d.tdel,1); markDirty(); buildAdmin(); }
     else if(d.tmv){ const [i,dir]=d.tmv.split(":"); move(adminTools,+i,+dir); markDirty(); buildAdmin(); }
+    else if(b.id==="resetT"){
+      if(confirm("This erases your saved tools list so you can enter it again with a new password. Continue?")){ adminTools=[]; data.toolsEnc=null; toolsOpen=null; toolsPw=""; markDirty(); buildAdmin(); }
+    }
     else if(b.id==="unlockT"){
       if(!toolsPw){ $("#uErr").textContent="Type your tools password above first."; return; }
       try{ adminTools=await decryptJSON(data.toolsEnc,toolsPw); buildAdmin(); }
@@ -813,7 +877,7 @@ function updateMeter(){
 function markDirty(){ $("#saveMsg").textContent="Unsaved changes. Press Save & publish."; updateMeter(); }
 
 function resizeImage(file,mode){
-  const P={logo:{max:160,fmt:"image/webp",q:.85,fill:null},thumb:{max:640,fmt:"image/jpeg",q:.72,fill:"#fff"},bg:{max:1280,fmt:"image/jpeg",q:.6,fill:"#fff"}}[mode]||{max:640,fmt:"image/jpeg",q:.72,fill:"#fff"};
+  const P={logo:{max:160,fmt:"image/webp",q:.85,fill:null},thumb:{max:640,fmt:"image/jpeg",q:.72,fill:"#fff"},bg:{max:1280,fmt:"image/jpeg",q:.6,fill:"#fff"},shot:{max:900,fmt:"image/jpeg",q:.72,fill:"#fff"}}[mode]||{max:640,fmt:"image/jpeg",q:.72,fill:"#fff"};
   return new Promise((res,rej)=>{
     const img=new Image(), url=URL.createObjectURL(file);
     img.onload=()=>{
