@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Proof of Work</title>
@@ -202,9 +205,13 @@ textarea.in{min-height:70px;resize:vertical}
 .login{max-width:380px;margin:12vh auto;padding:26px}
 .banner{background:#fef3c7;color:#92400e;font-size:13px;padding:10px 14px;border-radius:12px;margin-bottom:14px}
 @media(max-width:560px){.stats{grid-template-columns:repeat(3,1fr)}.mrow{grid-template-columns:1fr 1fr;}.mrow .in:first-child{grid-column:1/-1}.cnav{display:none}}
+#boot{position:fixed;inset:0;background:#fff;display:grid;place-items:center;z-index:200}
+#boot i{width:44px;height:44px;border-radius:50%;border:4px solid var(--p100);border-top-color:var(--p600);animation:bspin .8s linear infinite}
+@keyframes bspin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
+<div id="boot" aria-label="Loading"><i></i></div>
 
 <!-- ======================= PUBLIC SITE ======================= -->
 <div id="site">
@@ -255,6 +262,7 @@ textarea.in{min-height:70px;resize:vertical}
 
 <!-- ======================= ADMIN ======================= -->
 <div id="admin">
+  <div id="adminLoad" class="login card" style="display:none"><p style="margin:0;text-align:center">Loading your data...</p></div>
   <div id="loginBox" class="login card" style="display:none">
     <h2 style="margin:0 0 6px;color:var(--p700)">Admin login</h2>
     <p class="hint" style="margin:0 0 6px">Only you can edit the site.</p>
@@ -374,20 +382,76 @@ async function decryptJSON(blob,pw){
 
 /* ---------- firebase ---------- */
 function normalize(){ data.bg=data.bg||{}; data.fonts=data.fonts||{}; data.profile=data.profile||{}; ["roles","projects","content","animations","testimonials","contacts"].forEach(k=>{ if(!Array.isArray(data[k])) data[k]=[]; }); }
-async function initFirebase(){
-  if(!FIREBASE_CONFIG) return;
-  const v="10.12.2", base=`https://www.gstatic.com/firebasejs/${v}/`;
-  const [{initializeApp},fs,au] = await Promise.all([
-    import(base+"firebase-app.js"), import(base+"firebase-firestore.js"), import(base+"firebase-auth.js")
-  ]);
-  const app=initializeApp(FIREBASE_CONFIG);
-  fb={...fs,...au}; db=fs.getFirestore(app); auth=au.getAuth(app);
-  au.onAuthStateChanged(auth,u=>{ authed=!!u; if(location.hash==="#admin") route(); });
+/* Visitors read the site over plain HTTPS (REST): no Firebase library to download, and each section
+   lives in its own document so the page can show up piece by piece. The library is loaded only for the admin. */
+const PARTS=["projects","content","animations","testimonials"];
+const docs={}, net={}, partsLoaded={};
+const CK="pow:v2:";
+let sdkP=null, authReady=false, editing=false, routed=false;
+const emptyText=(k,txt)=>partsLoaded[k]?txt:"Loading...";
+const allNet=()=>!FIREBASE_CONFIG||["main",...PARTS].every(n=>net[n]);
+
+function fromFs(v){
+  if(v==null) return null;
+  if("stringValue" in v) return v.stringValue;
+  if("integerValue" in v) return Number(v.integerValue);
+  if("doubleValue" in v) return v.doubleValue;
+  if("booleanValue" in v) return v.booleanValue;
+  if("timestampValue" in v) return v.timestampValue;
+  if("arrayValue" in v) return (v.arrayValue.values||[]).map(fromFs);
+  if("mapValue" in v){ const o={}, f=v.mapValue.fields||{}; for(const k in f) o[k]=fromFs(f[k]); return o; }
+  return null;
+}
+async function restGet(name){
+  const ctl=new AbortController(), t=setTimeout(()=>ctl.abort(),25000);
   try{
-    const snap=await fs.getDoc(fs.doc(db,"site","main"));
-    data = snap.exists()? Object.assign(clone(DEMO),snap.data()) : emptyData();
-  }catch(e){ console.warn("Could not load data",e); data=emptyData(); }
-  normalize();
+    const r=await fetch(`https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/(default)/documents/site/${name}?key=${FIREBASE_CONFIG.apiKey}`,{signal:ctl.signal});
+    if(r.status===404) return null;
+    if(!r.ok) throw Object.assign(new Error("rest "+r.status),{status:r.status});
+    const j=await r.json(), o={}; for(const k in (j.fields||{})) o[k]=fromFs(j.fields[k]); return o;
+  } finally{ clearTimeout(t); }
+}
+function ensureSdk(){
+  if(!FIREBASE_CONFIG) return Promise.resolve();
+  if(sdkP) return sdkP;
+  sdkP=(async()=>{
+    const base="https://www.gstatic.com/firebasejs/10.12.2/";
+    const [{initializeApp},fs,au]=await Promise.all([import(base+"firebase-app.js"),import(base+"firebase-firestore.js"),import(base+"firebase-auth.js")]);
+    const app=initializeApp(FIREBASE_CONFIG); fb={...fs,...au}; db=fs.getFirestore(app); auth=au.getAuth(app);
+    await new Promise(res=>{ au.onAuthStateChanged(auth,u=>{ authed=!!u; const first=!authReady; authReady=true; if(first) res(); if(location.hash==="#admin") route(); }); });
+  })();
+  return sdkP;
+}
+async function sdkGet(name){ await ensureSdk(); const sn=await fb.getDoc(fb.doc(db,"site",name)); return sn.exists()?sn.data():null; }
+async function getPart(name){
+  try{ return await restGet(name); }
+  catch(e){
+    console.warn("REST read failed, trying the Firebase library",name,e);
+    try{ return await sdkGet(name); }
+    catch(e2){ if(name!=="main"&&/permission/i.test((e2.code||"")+" "+(e2.message||""))) return null; throw e2; }
+  }
+}
+function assemble(){
+  const base=docs.main?Object.assign(emptyData(),docs.main):emptyData();
+  PARTS.forEach(k=>{ const d=docs[k]; if(d&&Array.isArray(d.items)) base[k]=d.items; });
+  data=base; normalize();
+}
+function cacheRead(){ try{ ["main",...PARTS].forEach(n=>{ const x=localStorage.getItem(CK+n); if(x!==null) docs[n]=JSON.parse(x); }); }catch(e){} }
+function cacheWrite(n,o){ try{ localStorage.setItem(CK+n,JSON.stringify(o)); }catch(e){} }
+function hideBoot(){ const b=$("#boot"); if(b) b.remove(); }
+function refreshView(){ if(editing) return; assemble(); if(view==="site") renderSite(); else if(view===null||view==="admin") route(); }
+async function loadPublic(){
+  if(!FIREBASE_CONFIG){ PARTS.forEach(k=>{ partsLoaded[k]=true; net[k]=true; }); net.main=true; route(); return; }
+  cacheRead();
+  if(docs.main!==undefined){ PARTS.forEach(k=>{ partsLoaded[k]=docs[k]!==undefined; }); assemble(); routed=true; route(); }
+  let timer=null; const later=()=>{ clearTimeout(timer); timer=setTimeout(()=>{ if(!routed){ assemble(); routed=true; route(); } else refreshView(); },30); };
+  await Promise.all(["main",...PARTS].map(async n=>{
+    try{
+      const o=await getPart(n), prev=docs[n], changed=prev===undefined||JSON.stringify(prev)!==JSON.stringify(o);
+      net[n]=true; partsLoaded[n]=true;
+      if(changed){ docs[n]=o; cacheWrite(n,o); later(); }
+    }catch(e){ console.warn("Could not load",n,e); partsLoaded[n]=true; if(n==="main"&&!routed) later(); }
+  }));
 }
 function emptyData(){ return {profile:{name:"Your Name",eyebrow:"Proof of Work",tagline:"Add your tagline in the admin panel."},roles:[],projects:[],content:[],animations:[],testimonials:[],contacts:[],bg:{},fonts:{},toolsEnc:null}; }
 
@@ -453,7 +517,7 @@ function renderSite(){
       <div><h3>${esc(pr.name)}</h3>${link?`<a href="${esc(link)}" target="_blank" rel="noopener">Visit ↗</a>`:""}</div></div>
       ${roles.length?`<div class="roles">${roles.map(r=>`<span class="role">${esc(r)}</span>`).join("")}</div>`:""}
       ${pr.note?`<p class="note">${esc(pr.note)}</p>`:""}${metrics}</article>`;
-  }).join(""):`<div class="empty">Projects will show up here.</div>`;
+  }).join(""):`<div class="empty">${emptyText("projects","Projects will show up here.")}</div>`;
   animateBars();
 
   renderContent();
@@ -483,7 +547,7 @@ let cTimer=null, cPause=0;
 function renderContent(){
   clearInterval(cTimer);
   const box=$("#contentBox"), items=data.content||[];
-  if(!items.length){ box.innerHTML=`<div class="empty">Best content will show up here.</div>`; return; }
+  if(!items.length){ box.innerHTML=`<div class="empty">${emptyText("content","Best content will show up here.")}</div>`; return; }
   box.innerHTML=`<div class="cwrap"><button class="cnav l" aria-label="Previous">‹</button>
     <div class="ctrack" id="ctrack">${items.map(c=>{
       const u=safeUrl(c.url), th=safeImg(c.thumb);
@@ -507,7 +571,7 @@ let tTimer=null, tPause=0;
 function renderTestimonials(){
   clearInterval(tTimer);
   const box=$("#testiBox"), items=(data.testimonials||[]).filter(t=>t.name||t.text||t.shot);
-  if(!items.length){ box.innerHTML=`<div class="empty">Testimonials will show up here.</div>`; return; }
+  if(!items.length){ box.innerHTML=`<div class="empty">${emptyText("testimonials","Testimonials will show up here.")}</div>`; return; }
   box.innerHTML=`<div class="cwrap"><button class="cnav l" aria-label="Previous">‹</button>
     <div class="ctrack" id="ttrack">${items.map(t=>{
       const av=safeImg(t.avatar), shot=safeImg(t.shot);
@@ -548,7 +612,7 @@ function renderCarousel(){
   clearInterval(carTimer); carIdx=0; carPaused=false;
   const items=(data.animations||[]).filter(a=>a.url);
   const box=$("#animBox");
-  if(!items.length){ box.innerHTML=`<div class="empty">Animations will show up here.</div>`; return; }
+  if(!items.length){ box.innerHTML=`<div class="empty">${emptyText("animations","Animations will show up here.")}</div>`; return; }
   const slides=items.map((a,i)=>{
     const m=parseMedia(a.url), canEmbed=!!m.embed, own=safeImg(a.thumb), th=own||m.thumb;
     return `<div class="slide" data-i="${i}" data-embed="${esc(m.embed||"")}">
@@ -637,6 +701,7 @@ function applyDesign(){
    ========================================================= */
 function showSite(){ $("#admin").style.display="none"; $("#site").style.display="block"; renderSite(); view="site"; }
 function route(){
+  hideBoot();
   if(location.hash==="#admin"){ showAdmin(); view="admin"; }
   else if(view!=="site") showSite();
 }
@@ -650,7 +715,10 @@ const TABS=[["profile","Profile"],["projects","Projects"],["content","Content"],
 
 function showAdmin(){
   $("#site").style.display="none"; $("#admin").style.display="block";
+  if(FIREBASE_CONFIG&&!authReady){ $("#loginBox").style.display="none"; $("#adminApp").style.display="none"; $("#adminLoad").style.display="block"; ensureSdk().then(()=>route()).catch(e=>{ console.warn(e); $("#adminLoad").textContent="Couldn't reach the server. Check your connection and refresh."; }); return; }
   const need = !!FIREBASE_CONFIG && !authed;
+  if(!need&&!allNet()){ $("#loginBox").style.display="none"; $("#adminApp").style.display="none"; $("#adminLoad").style.display="block"; setTimeout(()=>{ if(view==="admin") route(); },300); return; }
+  $("#adminLoad").style.display="none";
   $("#loginBox").style.display=need?"block":"none";
   $("#adminApp").style.display=need?"none":"block";
   if(!FIREBASE_CONFIG){
@@ -870,19 +938,25 @@ function previewFont(sel){
 }
 function move(arr,i,dir){ const j=i+dir; if(j<0||j>=arr.length) return; [arr[i],arr[j]]=[arr[j],arr[i]]; }
 
+function splitDocs(){
+  const main=JSON.parse(JSON.stringify(data)), out={};
+  PARTS.forEach(k=>{ out[k]={items:data[k]||[]}; delete main[k]; });
+  out.main=main; return out;
+}
 function usageBytes(){
-  const {toolsEnc,...rest}=data; let n=JSON.stringify(rest).length;
+  if(PARTS.includes(activeTab)) return JSON.stringify({items:data[activeTab]||[]}).length;
+  const {toolsEnc,...rest}=splitDocs().main; let n=JSON.stringify(rest).length;
   if(adminTools) n+=Math.round(JSON.stringify(adminTools).length*1.8); else if(toolsEnc) n+=JSON.stringify(toolsEnc).length;
   return n;
 }
 function updateMeter(){
   const n=usageBytes(), kb=Math.round(n/1024), m=$("#meter");
-  m.textContent=`Storage used: ${kb} KB of about 1000 KB`;
+  m.textContent=`Storage used in this section: ${kb} KB of about 1000 KB`;
   m.className="meter"+(n>1000000?" bad":(n>800000?" warn":""));
   if(n>1000000) m.textContent+=" (too much: remove or shrink some images)";
   else if(n>800000) m.textContent+=" (getting full)";
 }
-function markDirty(){ $("#saveMsg").textContent="Unsaved changes. Press Save & publish."; updateMeter(); }
+function markDirty(){ editing=true; $("#saveMsg").textContent="Unsaved changes. Press Save & publish."; updateMeter(); }
 
 function resizeImage(file,mode){
   const P={logo:{max:160,fmt:"image/webp",q:.85,fill:null},thumb:{max:640,fmt:"image/jpeg",q:.72,fill:"#fff"},bg:{max:1280,fmt:"image/jpeg",q:.6,fill:"#fff"},shot:{max:900,fmt:"image/jpeg",q:.72,fill:"#fff"}}[mode]||{max:640,fmt:"image/jpeg",q:.72,fill:"#fff"};
@@ -911,9 +985,15 @@ async function save(){
       }
       toolsOpen=null;
     }
-    if(JSON.stringify(data).length>1000000){ msg.textContent="Too much image data to save. Remove or shrink some images."; btn.disabled=false; updateMeter(); return; }
+    const sp=splitDocs(), big=Object.entries(sp).find(([k,v])=>JSON.stringify(v).length>1000000);
+    if(big){ msg.textContent="Too much image data in "+(big[0]==="main"?"the profile, design or contact settings":"the "+big[0]+" section")+". Remove or shrink some images."; btn.disabled=false; updateMeter(); return; }
     if(!FIREBASE_CONFIG){ msg.textContent="Demo mode: updated here only, not saved."; btn.disabled=false; return; }
-    await fb.setDoc(fb.doc(db,"site","main"),JSON.parse(JSON.stringify(data,(k,v)=>v===undefined?null:v)));
+    if(!allNet()){ msg.textContent="Still loading your data. Wait a moment and try again."; btn.disabled=false; return; }
+    await ensureSdk();
+    const sv=o=>JSON.parse(JSON.stringify(o,(k,v)=>v===undefined?null:v));
+    for(const k of PARTS) await fb.setDoc(fb.doc(db,"site",k),sv(sp[k]));
+    await fb.setDoc(fb.doc(db,"site","main"),sv(sp.main));
+    Object.entries(sp).forEach(([n,o])=>{ docs[n]=o; cacheWrite(n,o); });
     msg.textContent="Saved. Your site is updated.";
   }catch(e){ console.error(e); msg.textContent="Could not save: "+(e.message||"check your Firebase rules."); }
   btn.disabled=false; updateMeter();
@@ -932,7 +1012,7 @@ $("#lBtn").onclick=async()=>{
 $("#lPass").onkeydown=e=>{ if(e.key==="Enter") $("#lBtn").click(); };
 
 /* ---------- start ---------- */
-(async()=>{ try{ await initFirebase(); }catch(e){ console.warn(e); } route(); })();
+loadPublic().catch(e=>{ console.warn(e); if(!routed){ routed=true; assemble(); route(); } });
 </script>
 </body>
 </html>
