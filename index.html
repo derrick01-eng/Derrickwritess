@@ -28,7 +28,7 @@
   --sans:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:74px}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
 body{margin:0;font-family:var(--fb,var(--sans));color:var(--ink);background:var(--page);line-height:1.55;-webkit-text-size-adjust:100%}
 img{max-width:100%;display:block}
 a{color:inherit}
@@ -38,15 +38,34 @@ section.s,header.hero,footer{font-family:var(--fb,var(--sans))}
 h1,h2,h3{font-family:var(--fh,var(--fb,var(--sans)))}
 
 /* ---------- top bar: flowing ribbons ---------- */
-nav.top{position:sticky;top:0;z-index:20;background:var(--navbg);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);overflow:hidden;font-family:var(--fb,var(--sans))}
-.ticker{overflow:hidden;padding:9px 0}
-.tk{display:flex;width:max-content;animation:flow 20s linear infinite}
-.tk:hover,.tk.hold{animation-play-state:paused}
-.tkset{display:flex;gap:10px;padding-right:10px}
-.rib{display:inline-block;text-decoration:none;white-space:nowrap;font-weight:700;font-size:14px;color:var(--p700);background:var(--surface);border:2px solid var(--p600);border-radius:99px;padding:6px 16px;box-shadow:0 0 0 3px var(--p100)}
-.rib:hover{background:var(--p600);color:#fff}
-@keyframes flow{from{transform:translateX(-16.6667%)}to{transform:translateX(0)}}
-@media (prefers-reduced-motion:reduce){.tk{animation:none}.ticker{overflow-x:auto}}
+header.hdr{position:fixed;top:0;left:0;right:0;z-index:50;padding:10px 0;pointer-events:none;font-family:var(--fb,var(--sans))}
+header.hdr .wrap{pointer-events:none}
+.pill{pointer-events:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--navbg);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:99px;padding:8px 10px 8px 16px;box-shadow:0 10px 30px rgba(30,20,70,.16)}
+.brandl{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:20px;letter-spacing:-.02em;color:var(--ink);min-width:0}
+.brandl img{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none}
+.brandl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbtns{display:flex;align-items:center;gap:8px;flex:none}
+.hbtn{width:42px;height:42px;border-radius:50%;border:0;background:var(--p50);color:var(--p700);display:grid;place-items:center;cursor:pointer}
+.hbtn:hover{background:var(--p100)}
+.bars{position:relative;width:20px;height:14px;display:block}
+.bars i{position:absolute;left:0;right:0;height:2.5px;border-radius:2px;background:currentColor;transition:transform .25s,opacity .2s,top .25s}
+.bars i:nth-child(1){top:0}.bars i:nth-child(2){top:5.5px}.bars i:nth-child(3){top:11px}
+#menuBtn[aria-expanded="true"] .bars i:nth-child(1){top:5.5px;transform:rotate(45deg)}
+#menuBtn[aria-expanded="true"] .bars i:nth-child(2){opacity:0}
+#menuBtn[aria-expanded="true"] .bars i:nth-child(3){top:5.5px;transform:rotate(-45deg)}
+.menu{pointer-events:auto;margin-top:8px;background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:10px;box-shadow:0 18px 40px rgba(30,20,70,.22);display:none;flex-direction:column;gap:2px;transform-origin:top}
+.menu.on{display:flex;animation:mpop .22s ease}
+.menu a{text-decoration:none;color:var(--ink);font-size:19px;font-weight:600;padding:15px 20px;border-radius:99px}
+.menu a:hover{background:var(--p50)}
+.menu a.cta{background:var(--p600);color:#fff;margin-top:6px}
+.menu a.cta:hover{filter:brightness(1.1)}
+@keyframes mpop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+.csh{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.csh .sh{margin-bottom:12px}
+.robot{width:min(240px,70vw);flex:none}
+.robot svg{width:100%;height:auto;display:block;overflow:visible}
+.tprof{display:inline-flex;align-items:center;gap:7px;margin-top:12px;text-decoration:none;font-weight:700;font-size:13px;color:var(--ink);background:var(--p50);border:1px solid var(--line);border-radius:99px;padding:4px 13px 4px 5px}
+.tprof svg{width:22px;height:22px;flex:none}
 
 /* ---------- background layers ---------- */
 section.s,header.hero{position:relative;overflow:hidden}
@@ -56,7 +75,7 @@ section.s,header.hero{position:relative;overflow:hidden}
 .bgl video{object-fit:cover}
 
 /* ---------- hero ---------- */
-.hero{background:linear-gradient(160deg,var(--p700),var(--p900));color:#fff;padding:54px 0 64px}
+.hero{background:linear-gradient(160deg,var(--p700),var(--p900));color:#fff;padding:112px 0 64px}
 .hero:after{content:"";position:absolute;right:-90px;top:-90px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.08);z-index:0}
 .eyebrow{display:inline-block;background:rgba(255,255,255,.16);padding:5px 12px;border-radius:99px;font-size:13px;font-weight:600;margin-bottom:16px}
 .hero h1{font-size:clamp(32px,7vw,54px);line-height:1.08;margin:0 0 12px;letter-spacing:-.03em}
@@ -215,8 +234,7 @@ html[data-theme="dark"]{--page:#0f0b1f;--surface:#171229;--navbg:rgba(15,11,31,.
 html[data-theme="dark"] #site{--ink:#ece9f7;--mute:#a8a4c4;--line:#2d2650;--p50:#171229;--p100:#261e46;--p200:#4b3d7c;--p600:#8b5cf6;--p700:#a78bfa;--good:#4ade80}
 html[data-theme="dark"] #site .up{background:#123524;color:#4ade80}
 html[data-theme="dark"] #boot i{border-color:#261e46;border-top-color:#8b5cf6}
-#themeBtn{position:fixed;right:16px;bottom:16px;z-index:60;width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 20px rgba(30,20,70,.28)}
-#themeBtn svg{width:22px;height:22px}
+#themeBtn svg{width:20px;height:20px}
 #themeBtn .sun{display:none}
 html[data-theme="dark"] #themeBtn .sun{display:block}
 html[data-theme="dark"] #themeBtn .moon{display:none}
@@ -239,7 +257,19 @@ html[data-theme="dark"] #themeBtn .moon{display:none}
 <!-- ======================= PUBLIC SITE ======================= -->
 <div id="site">
   <div id="top"></div>
-  <nav class="top"><div class="ticker"><div class="tk" id="tk"></div></div></nav>
+  <header class="hdr" id="hdr"><div class="wrap">
+    <div class="pill">
+      <a class="brandl" href="#top"><img src="icon-192.png" alt="" onerror="this.style.display='none'"><span id="brandName">Proof of Work</span></a>
+      <div class="hbtns">
+        <button class="hbtn" id="themeBtn" aria-label="Switch to dark mode" title="Light or dark mode">
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button class="hbtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span class="bars"><i></i><i></i><i></i></span></button>
+      </div>
+    </div>
+    <div class="menu" id="menu"><div id="menuLinks" style="display:contents"></div></div>
+  </div></header>
 
   <header class="hero" id="home"><div class="bgl"></div><div class="wrap">
     <span class="eyebrow" id="hEyebrow"></span>
@@ -271,7 +301,7 @@ html[data-theme="dark"] #themeBtn .moon{display:none}
   </div></section>
 
   <section class="s" id="contact"><div class="bgl"></div><div class="wrap">
-    <div class="sh"><h2>Contact</h2><p>Let's build something.</p></div>
+    <div class="csh"><div class="sh"><h2>Contact</h2><p>Let's build something.</p></div><div class="robot" id="robot" aria-hidden="true"></div></div>
     <div class="contacts" id="contactList"></div>
   </div></section>
 
@@ -281,10 +311,6 @@ html[data-theme="dark"] #themeBtn .moon{display:none}
   </div></section>
 
   <footer><div class="wrap">© <span id="yr"></span> <span id="fName"></span> · <a href="#admin">Admin</a></div></footer>
-  <button id="themeBtn" aria-label="Switch to dark mode" title="Light or dark mode">
-    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-  </button>
   <div id="vm"><div class="vbox"><div class="vbar"><div id="vmLink"></div><button class="vx" id="vmX" aria-label="Close video">×</button></div><div class="vframe" id="vmFrame"></div></div></div>
 </div>
 
@@ -486,17 +512,62 @@ function emptyData(){ return {profile:{name:"Your Name",eyebrow:"Proof of Work",
 /* =========================================================
    PUBLIC RENDER
    ========================================================= */
+/* ---------- little robot dialling a phone (contact section) ---------- */
+function robotSVG(){
+  const T=9, cols=[106,132,158], rows=[96,110,124,138];
+  const layout=[["1","2","3"],["4","5","6"],["7","8","9"],["*","0","#"]];
+  const pos={}; layout.forEach((row,r)=>row.forEach((k,c)=>{ pos[k]={x:cols[c],y:rows[r]}; }));
+  const seq=["0","8","0","1","2","3","4"], rest={x:74,y:108}, t0=0.7, step=0.9, hold=0.4;
+  const f=n=>+(n).toFixed(4);
+  let xs=[rest.x], ys=[rest.y], kt=[0];
+  seq.forEach((k,i)=>{ const a=t0+i*step, q=pos[k]; xs.push(q.x,q.x); ys.push(q.y,q.y); kt.push(f(a/T),f((a+hold)/T)); });
+  const back=t0+seq.length*step; xs.push(rest.x,rest.x); ys.push(rest.y,rest.y); kt.push(f(back/T),1);
+  const anim=(attr,vals,keyTimes,extra="")=>`<animate attributeName="${attr}" values="${vals.join(";")}" keyTimes="${keyTimes.join(";")}" dur="${T}s" repeatCount="indefinite" ${extra}/>`;
+  let keysSvg="";
+  layout.forEach(row=>row.forEach(k=>{
+    const q=pos[k], presses=seq.map((x,i)=>x===k?t0+i*step:null).filter(x=>x!==null);
+    let flash="";
+    if(presses.length){ const v=[0],tt=[0]; presses.forEach(a=>{ v.push(0,1,1,0); tt.push(f(a/T),f((a+0.05)/T),f((a+hold)/T),f((a+hold+0.08)/T)); }); v.push(0); tt.push(1);
+      flash=`<circle cx="${q.x}" cy="${q.y}" r="5.8" fill="#f59e0b" opacity="0">${anim("opacity",v,tt)}</circle>`; }
+    keysSvg+=`<circle cx="${q.x}" cy="${q.y}" r="5.8" style="fill:var(--surface);stroke:var(--line)"/><text x="${q.x}" y="${q.y+2.6}" text-anchor="middle" font-size="7" font-weight="700" font-family="Arial,sans-serif" style="fill:var(--mute)">${k}</text>${flash}`;
+  }));
+  const digits=seq.map((d,i)=>{ const a=t0+i*step; return `<text x="${98+i*10}" y="76" font-size="11" font-weight="700" font-family="monospace" fill="#86efac" opacity="0">${d}${anim("opacity",[0,0,1,1,0],[0,f(a/T),f((a+0.05)/T),0.93,0.96])}</text>`; }).join("");
+  const ring=(n,a)=>`<path d="M${184+n*5} ${60-n*4}q${6+n*3} ${4} 0 ${8+n*8}" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" opacity="0">${anim("opacity",[0,0,1,1,0,0],[0,f(a/T),f((a+0.15)/T),f((a+0.8)/T),f((a+1)/T),1])}</path>`;
+  const blink=(rx,ry)=>`<ellipse rx="${rx}" ry="${ry}" fill="#fff">${anim("ry",[ry,ry,0.8,ry],[0,0.9,0.93,1]).replace('dur="9s"','dur="3.6s"')}</ellipse>`;
+  return `<svg viewBox="0 0 196 156" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
+    <ellipse cx="38" cy="114" rx="30" ry="4.5" style="fill:var(--ink)" opacity=".12"/>
+    <line x1="35" y1="20" x2="35" y2="10" stroke-width="2.5" stroke-linecap="round" style="stroke:var(--ink)"/>
+    <circle cx="35" cy="8" r="3.6" fill="#f87171"><animate attributeName="opacity" values="1;.25;1" dur="1.4s" repeatCount="indefinite"/></circle>
+    <rect x="12" y="20" width="46" height="36" rx="12" style="fill:var(--p600)"/>
+    <g transform="translate(26 36)">${blink(5.4,6)}<circle cx="1.4" cy="0" r="2.4" fill="#1e1b2e"/></g>
+    <g transform="translate(44 36)">${blink(5.4,6)}<circle cx="1.4" cy="0" r="2.4" fill="#1e1b2e"/></g>
+    <path d="M28 47q7 5 14 0" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+    <rect x="16" y="58" width="38" height="42" rx="10" style="fill:var(--p700)"/>
+    <circle cx="35" cy="76" r="4.2" fill="#fbbf24"><animate attributeName="opacity" values="1;.4;1" dur="2s" repeatCount="indefinite"/></circle>
+    <rect x="22" y="100" width="9" height="11" rx="3" style="fill:var(--ink)"/><rect x="39" y="100" width="9" height="11" rx="3" style="fill:var(--ink)"/>
+    <line x1="16" y1="70" x2="6" y2="90" stroke-width="6" stroke-linecap="round" style="stroke:var(--p700)"/>
+    <rect x="84" y="56" width="96" height="92" rx="12" style="fill:var(--p200);stroke:var(--line)"/>
+    <g><rect x="90" y="44" width="84" height="13" rx="6.5" style="fill:var(--p600)"/>
+      <animateTransform attributeName="transform" type="rotate" values="0 132 50;0 132 50;-5 132 50;5 132 50;-5 132 50;5 132 50;0 132 50;0 132 50" keyTimes="0;${f(7.2/T)};${f(7.4/T)};${f(7.6/T)};${f(7.8/T)};${f(8/T)};${f(8.2/T)};1" dur="${T}s" repeatCount="indefinite"/></g>
+    <rect x="92" y="64" width="80" height="17" rx="4" fill="#1e1b2e"/>${digits}
+    ${keysSvg}
+    ${ring(0,7.2)}${ring(1,7.45)}${ring(2,7.7)}
+    <line x1="54" y1="70" x2="${rest.x}" y2="${rest.y}" stroke-width="6" stroke-linecap="round" style="stroke:var(--p700)">${anim("x2",xs,kt)}${anim("y2",ys,kt)}</line>
+    <circle cx="${rest.x}" cy="${rest.y}" r="5.6" fill="#fbbf24" style="stroke:var(--ink)" stroke-width="1.2">${anim("cx",xs,kt)}${anim("cy",ys,kt)}</circle>
+  </svg>`;
+}
+function startRobot(){
+  const el=$("#robot"); if(!el||el.firstChild) return; el.innerHTML=robotSVG();
+  const svg=el.querySelector("svg"); try{ if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches&&svg.pauseAnimations) svg.pauseAnimations(); }catch(e){}
+}
+
+
 function renderTicker(){
   const p=data.profile||{};
-  const items=[[p.navLabel||"Homepage","#top"],["Analytics","#analytics"],["Content","#content"],["Animations","#animations"],["Testimonials","#testimonials"],["Contact","#contact"],["🔒 Tools","#tools"]];
-  const set=(hidden)=>`<div class="tkset"${hidden?' aria-hidden="true"':""}>${items.map(([l,h])=>`<a class="rib" href="${h}"${hidden?' tabindex="-1"':""}>${esc(l)}</a>`).join("")}</div>`;
-  const tk=$("#tk"); tk.innerHTML=set(false)+set(true)+set(true)+set(true)+set(true)+set(true);
-  if(!tk._bound){
-    tk._bound=true; let t=null;
-    tk.addEventListener("touchstart",()=>{ clearTimeout(t); tk.classList.add("hold"); },{passive:true});
-    const rel=()=>{ clearTimeout(t); t=setTimeout(()=>tk.classList.remove("hold"),1500); };
-    tk.addEventListener("touchend",rel,{passive:true}); tk.addEventListener("touchcancel",rel,{passive:true});
-  }
+  const items=[[p.navLabel||"Homepage","#top"],["Analytics","#analytics"],["Content","#content"],["Animations","#animations"],["Testimonials","#testimonials"],["🔒 Tools","#tools"],["Contact","#contact"]];
+  $("#menuLinks").innerHTML=items.map(([l,h],k)=>`<a href="${h}"${k===items.length-1?' class="cta"':""}>${esc(l)}</a>`).join("");
+  $("#brandName").textContent=p.name||"Proof of Work";
+  startRobot();
 }
 
 function renderSite(){
@@ -596,15 +667,18 @@ function renderContent(){
 
 /* ---------- testimonials carousel ---------- */
 let tTimer=null, tPause=0;
+const PROF_LABEL={x:"X",li:"LinkedIn",ig:"Instagram",fb:"Facebook",tiktok:"TikTok",yt:"YouTube",tg:"Telegram"};
+function profKind(u){ u=String(u||""); if(/(?:^|\/\/|\.)(?:x|twitter)\.com/i.test(u)) return "x"; if(/linkedin\.com/i.test(u)) return "li"; if(/instagram\.com/i.test(u)) return "ig"; if(/facebook\.com|fb\.com/i.test(u)) return "fb"; if(/tiktok\.com/i.test(u)) return "tiktok"; if(/youtube\.com|youtu\.be/i.test(u)) return "yt"; if(/t\.me\//i.test(u)) return "tg"; return "link"; }
 function renderTestimonials(){
   clearInterval(tTimer);
   const box=$("#testiBox"), items=(data.testimonials||[]).filter(t=>t.name||t.text||t.shot);
   if(!items.length){ box.innerHTML=`<div class="empty">${emptyText("testimonials","Testimonials will show up here.")}</div>`; return; }
   box.innerHTML=`<div class="cwrap"><button class="cnav l" aria-label="Previous">‹</button>
     <div class="ctrack" id="ttrack">${items.map(t=>{
-      const av=safeImg(t.avatar), shot=safeImg(t.shot);
+      const av=safeImg(t.avatar), shot=safeImg(t.shot), prof=safeUrl(t.profile), pk=profKind(t.profile);
       return `<article class="tc"><div class="thd"><div class="av">${av?`<img src="${esc(av)}" alt="">`:esc((t.name||"?")[0].toUpperCase())}</div>
         <div class="tw"><b>${esc(t.name)}</b>${t.role?`<span>${esc(t.role)}</span>`:""}</div></div>
+        ${prof?`<a class="tprof" href="${esc(prof)}" target="_blank" rel="noopener">${ICON[pk]||ICON.link}<span>${pk==="link"?"View profile":"View on "+PROF_LABEL[pk]}</span></a>`:""}
         ${t.text?`<p class="tq">${esc(t.text)}</p>`:""}${shot?`<img class="tshot" src="${esc(shot)}" alt="Screenshot of testimonial" loading="lazy">`:""}</article>`;}).join("")}</div>
     <button class="cnav r" aria-label="Next">›</button></div>`;
   const tr=$("#ttrack");
@@ -635,9 +709,11 @@ const ICON={
   tg:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#229ed9"/><path d="M5.5 11.8l12.3-4.7c.6-.2 1 .1.9.9l-2.1 9.8c-.1.6-.5.8-1 .5l-3.1-2.3-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.2 5.8-5.2c.3-.2-.1-.4-.4-.2l-7.2 4.5-3.1-1c-.7-.2-.7-.6.2-.9z" fill="#fff"/></svg>`,
   drive:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#0f9d58"/><path d="M12 6.5l5 8.5H7z" fill="#fff"/></svg>`,
   file:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#7c3aed"/><rect x="6" y="7.5" width="12" height="9" rx="2" fill="none" stroke="#fff" stroke-width="1.6"/><path d="M11 10v4l3.4-2z" fill="#fff"/></svg>`,
-  link:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#6b6880"/><path d="M9 15l6-6M10 9h5v5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+  link:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#6b6880"/><path d="M9 15l6-6M10 9h5v5" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  li:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#0a66c2"/><text x="12" y="16.2" text-anchor="middle" font-size="11" font-weight="700" font-family="Arial,sans-serif" fill="#fff">in</text></svg>`,
+  gphotos:`<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#fbbc04"/><path d="M12 6.5a3 3 0 0 1 0 5.5 3 3 0 0 1-5.5 0 3 3 0 0 1 5.5-5.5z" fill="#fff"/></svg>`
 };
-const PLAT_LABEL={yt:"YouTube",x:"X",tiktok:"TikTok",ig:"Instagram",fb:"Facebook",vimeo:"Vimeo",tg:"Telegram",drive:"Google Drive",file:"the video file",link:"the link"};
+const PLAT_LABEL={yt:"YouTube",x:"X",tiktok:"TikTok",ig:"Instagram",fb:"Facebook",vimeo:"Vimeo",tg:"Telegram",drive:"Google Drive",file:"the video file",link:"the link",gphotos:"Google Photos",li:"LinkedIn"};
 /* Works out where a link comes from, how to play it on the site, and what to call it */
 function parseMedia(url){
   url=String(url||"").trim(); let m;
@@ -645,10 +721,15 @@ function parseMedia(url){
   if((m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([\w-]{6,})/i)))
     return r("yt",{mode:"inline",thumb:`https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`,embed:`https://www.youtube.com/embed/${m[1]}?autoplay=1&rel=0`});
   if((m=url.match(/vimeo\.com\/(?:.*\/)?(\d{6,})/i))) return r("vimeo",{mode:"inline",embed:`https://player.vimeo.com/video/${m[1]}?autoplay=1`});
-  if((m=url.match(/drive\.google\.com\/file\/d\/([\w-]+)/i))) return r("drive",{mode:"inline",embed:`https://drive.google.com/file/d/${m[1]}/preview`});
+  if((m=url.match(/(?:drive|docs)\.google\.com\/(?:file\/d\/|(?:open|uc)\?(?:[^#]*&)?id=)([\w-]{10,})/i))) return r("drive",{mode:"inline",embed:`https://drive.google.com/file/d/${m[1]}/preview`});
+  if(/(?:photos\.app\.goo\.gl|photos\.google\.com)\//i.test(url)) return r("gphotos");
   if(/\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(url)) return r("file",{mode:"inline",file:url});
   if((m=url.match(/(?:x|twitter)\.com\/[^\/]+\/status\/(\d+)/i))) return r("x",{mode:"modal",embed:`https://platform.twitter.com/embed/Tweet.html?id=${m[1]}&theme=light&dnt=true`});
-  if((m=url.match(/tiktok\.com\/@[^\/]+\/video\/(\d+)/i))) return r("tiktok",{mode:"modal",embed:`https://www.tiktok.com/embed/v2/${m[1]}`});
+  if(/tiktok\.com/i.test(url)){
+    m=url.match(/tiktok\.com\/(?:@[^\/?#]+\/)?(?:video|photo)\/(\d+)/i)||url.match(/tiktok\.com\/(?:embed(?:\/v2)?|v|player\/v1)\/(\d+)/i)||url.match(/[?&](?:share_item_id|item_id|video_id)=(\d+)/i);
+    if(m) return r("tiktok",{mode:"modal",embed:`https://www.tiktok.com/embed/v2/${m[1]}`});
+    if(/^https?:\/\/(?:vm|vt|www)\.tiktok\.com\/(?:t\/)?[\w-]{5,}\/?(?:\?.*)?$/i.test(url)) return r("tiktok",{mode:"modal",resolve:"1"});
+  }
   if((m=url.match(/instagram\.com\/(p|reel|tv)\/([\w-]+)/i))) return r("ig",{mode:"modal",embed:`https://www.instagram.com/${m[1]}/${m[2]}/embed`});
   if(/(?:facebook\.com|fb\.watch)\//i.test(url)) return r("fb",{mode:"modal",embed:`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=500`});
   if((m=url.match(/t\.me\/([\w_]+)\/(\d+)/i))) return r("tg",{mode:"modal",embed:`https://t.me/${m[1]}/${m[2]}?embed=1&mode=tme`});
@@ -659,6 +740,28 @@ function openPlayer(src,open,type){
   $("#vmLink").innerHTML=open?`<a class="plat static" href="${esc(open)}" target="_blank" rel="noopener">${ICON[type]||ICON.link}<span>Open the original post</span></a>`:"";
   $("#vm").classList.add("on");
 }
+function openPlayerMsg(text,open,type){
+  $("#vmFrame").innerHTML=`<div style="padding:26px;color:#1e1b2e;font-weight:600">${esc(text)}</div>`;
+  $("#vmLink").innerHTML=open?`<a class="plat static" href="${esc(open)}" target="_blank" rel="noopener">${ICON[type]||ICON.link}<span>Open the original post</span></a>`:"";
+  $("#vm").classList.add("on");
+}
+async function resolveTikTok(url){
+  try{ const r=await fetch("https://www.tiktok.com/oembed?url="+encodeURIComponent(url)); if(!r.ok) return ""; const j=await r.json(), h=String(j.html||""); const m=h.match(/data-video-id="(\d+)"/)||h.match(/\/video\/(\d+)/); return m?m[1]:""; }
+  catch(e){ return ""; }
+}
+/* tells you, while you type a link in the admin, what the site will do with it */
+function detectText(url){
+  url=String(url||"").trim(); if(!url) return "";
+  const m=parseMedia(url);
+  if(m.type==="gphotos") return "Google Photos links can't be played on a website. Save the video to Google Drive, set sharing to 'Anyone with the link', and paste that link instead.";
+  if(/drive\.google\.com\/drive\/(?:u\/\d+\/)?folders\//i.test(url)) return "That's a Drive folder. Open the video itself in Drive and copy its link.";
+  if(m.type==="link") return "This link will open in a new tab. It can't play on the site.";
+  const name=m.type==="file"?"a direct video file":m.label, how=m.mode==="inline"?"plays right in the slide":"plays in a pop-up player";
+  let t=`Detected: ${name}. It ${how}.`;
+  if(m.type==="drive") t+=" Make sure sharing is set to 'Anyone with the link'.";
+  if(m.resolve) t+=" This is a short TikTok link, so it may not play. For a sure result, open the video in your browser and paste the full link (it has /video/ and a long number in it).";
+  return t;
+}
 function closePlayer(){ $("#vm").classList.remove("on"); $("#vmFrame").innerHTML=""; }
 let carTimer=null, carIdx=0, carPaused=false;
 function renderCarousel(){
@@ -667,9 +770,9 @@ function renderCarousel(){
   const box=$("#animBox");
   if(!items.length){ box.innerHTML=`<div class="empty">${emptyText("animations","Animations will show up here.")}</div>`; return; }
   const slides=items.map((a,i)=>{
-    const m=parseMedia(a.url), playable=!!(m.embed||m.file), own=safeImg(a.thumb), th=own||m.thumb, open=safeUrl(a.url);
+    const m=parseMedia(a.url), playable=!!(m.embed||m.file||m.resolve), own=safeImg(a.thumb), th=own||m.thumb, open=safeUrl(a.url);
     const badge=open?`<a class="plat" href="${esc(open)}" target="_blank" rel="noopener" aria-label="Open on ${esc(m.label)}">${ICON[m.type]}<span>${m.type==="link"?"Open link":(m.type==="file"?"Open video":"Open on "+esc(m.label))}</span></a>`:"";
-    return `<div class="slide" data-i="${i}" data-type="${m.type}" data-mode="${m.mode}" data-src="${esc(m.embed||m.file)}" data-open="${esc(open)}">
+    return `<div class="slide" data-i="${i}" data-type="${m.type}" data-mode="${m.mode}" data-src="${esc(m.embed||m.file)}" data-resolve="${m.resolve||""}" data-open="${esc(open)}">
       ${th?`<div class="bg" style="background-image:url('${esc(th)}')"></div>`:""}<div class="shade"></div>
       ${playable?`<button class="play" aria-label="Play video">▶</button>`:(open?`<a class="play" style="text-decoration:none" href="${esc(open)}" target="_blank" rel="noopener" aria-label="Open">↗</a>`:"")}
       ${badge}<div class="cap">${esc(a.title||"")}</div></div>`;
@@ -684,6 +787,9 @@ function renderCarousel(){
     if(d.mode==="inline"){
       const badge=s.querySelector(".plat"), bh=badge?badge.outerHTML:"";
       s.innerHTML=(d.type==="file"?`<video src="${esc(d.src)}" controls autoplay playsinline></video>`:`<iframe src="${esc(d.src)}" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>`)+bh;
+    } else if(d.resolve){
+      openPlayerMsg("Loading the TikTok...",d.open,d.type);
+      resolveTikTok(d.open).then(id=>{ if(id) openPlayer(`https://www.tiktok.com/embed/v2/${id}`,d.open,d.type); else openPlayerMsg("This TikTok link can't be played here. Tap the TikTok button above to watch it on TikTok.",d.open,d.type); });
     } else openPlayer(d.src,d.open,d.type);
   }; });
   box.querySelectorAll("#dots i").forEach(d=>d.onclick=()=>{carPaused=false;go(+d.dataset.d)});
@@ -849,17 +955,19 @@ function buildAdmin(){
     animations:()=>listPanel("animations","Animation",(it,i)=>`
       <label class="f">Title</label><input class="in" data-l="animations" data-i="${i}" data-k="title" value="${esc(it.title)}">
       ${upField("Thumbnail","animations",i,"thumb","thumb",it.thumb,"Best size 1280 × 720 px (16:9). If empty, YouTube links use their own preview.")}
-      <label class="f">Video link</label><input class="in" data-l="animations" data-i="${i}" data-k="url" value="${esc(it.url)}" placeholder="YouTube, Google Drive or X link">
-      <p class="hint">Paste a link and it plays on the site: YouTube, X (tweet with video), TikTok, Instagram, Facebook, Vimeo, Telegram, Google Drive (sharing set to "Anyone with the link") or a direct .mp4 link. Visitors tap the platform logo to open the original post.</p>`,
+      <label class="f">Video link</label><input class="in" data-l="animations" data-i="${i}" data-k="url" value="${esc(it.url)}" placeholder="Paste the video link here">
+      <div class="hint" data-detect="${i}">${esc(detectText(it.url))}</div>
+      <p class="hint">Paste a link and it plays on the site: YouTube, X (post with video), TikTok (use the full link from your browser), Instagram, Facebook, Vimeo, Telegram, Google Drive (sharing set to "Anyone with the link") or a direct .mp4 link. Visitors tap the platform logo to open the original post.</p>`,
       {title:"",url:"",thumb:""}),
     testimonials:()=>listPanel("testimonials","Testimonial",(it,i)=>`
       <label class="f">Name</label><input class="in" data-l="testimonials" data-i="${i}" data-k="name" value="${esc(it.name)}">
       ${upField("Photo of the person","testimonials",i,"avatar","logo",it.avatar,"A square photo works best, around 200 × 200 px.")}
       <label class="f">Their role in the project</label><input class="in" data-l="testimonials" data-i="${i}" data-k="role" value="${esc(it.role)}" placeholder="e.g. Marketing Lead at Splyce Finance">
+      <label class="f">Their account link (X, LinkedIn or any profile, optional)</label><input class="in" data-l="testimonials" data-i="${i}" data-k="profile" value="${esc(it.profile)}" placeholder="https://x.com/username">
       <label class="f">What they said (written)</label><textarea class="in" data-l="testimonials" data-i="${i}" data-k="text">${esc(it.text)}</textarea>
       ${upField("Screenshot of their message (optional)","testimonials",i,"shot","shot",it.shot,"A screenshot of their comment or DM. At least 900 px wide so it stays readable. Visitors can tap it to enlarge.")}
       <p class="hint">You can use the written text, the screenshot, or both.</p>`,
-      {name:"",role:"",avatar:"",text:"",shot:""}),
+      {name:"",role:"",avatar:"",text:"",shot:"",profile:""}),
     contacts:()=>listPanel("contacts","Contact",(it,i)=>`
       <label class="f">Label (Email, Telegram, X...)</label><input class="in" data-l="contacts" data-i="${i}" data-k="label" value="${esc(it.label)}">
       ${upField("Logo","contacts",i,"logo","logo",it.logo,"Square works best, around 200 × 200 px.")}
@@ -949,7 +1057,8 @@ function bindAdmin(){
     }
     else if(t.dataset.p){ data.profile[t.dataset.p]=t.value; }
     else if(t.id==="rolesIn"){ data.roles=t.value.split(",").map(s=>s.trim()).filter(Boolean); }
-    else if(t.dataset.l){ data[t.dataset.l][+t.dataset.i][t.dataset.k]=t.value; }
+    else if(t.dataset.l){ data[t.dataset.l][+t.dataset.i][t.dataset.k]=t.value;
+      if(t.dataset.l==="animations"&&t.dataset.k==="url"){ const el=document.querySelector('[data-detect="'+t.dataset.i+'"]'); if(el) el.textContent=detectText(t.value); } }
     else if(t.dataset.mi!==undefined){ data.projects[+t.dataset.mi].metrics[+t.dataset.mj][t.dataset.mk]=t.value; }
     else if(t.dataset.ti!==undefined){ adminTools[+t.dataset.ti][t.dataset.tk]=t.value; }
     else if(t.id==="tpw"){ toolsPw=t.value; }
@@ -1063,6 +1172,12 @@ const themeBtn=$("#themeBtn");
 const themeLabel=()=>themeBtn.setAttribute("aria-label",document.documentElement.dataset.theme==="dark"?"Switch to light mode":"Switch to dark mode");
 themeBtn.onclick=()=>{ const t=document.documentElement.dataset.theme==="dark"?"light":"dark"; document.documentElement.dataset.theme=t; try{ localStorage.setItem("pow:theme",t); }catch(e){} themeLabel(); };
 themeLabel();
+const menuBtn=$("#menuBtn"), menuEl=$("#menu");
+const setMenu=on=>{ menuEl.classList.toggle("on",on); menuBtn.setAttribute("aria-expanded",String(on)); menuBtn.setAttribute("aria-label",on?"Close menu":"Open menu"); };
+menuBtn.onclick=()=>setMenu(!menuEl.classList.contains("on"));
+menuEl.addEventListener("click",e=>{ if(e.target.closest("a")) setMenu(false); });
+document.addEventListener("click",e=>{ if(menuEl.classList.contains("on")&&!e.target.closest("#hdr")) setMenu(false); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") setMenu(false); });
 $("#vmX").onclick=closePlayer; $("#vm").onclick=e=>{ if(e.target.id==="vm") closePlayer(); };
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closePlayer(); });
 $("#viewSite").onclick=e=>{ e.preventDefault(); location.hash=""; route(); };
